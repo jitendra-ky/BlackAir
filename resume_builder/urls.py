@@ -23,6 +23,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('user.urls')),
+    path('api/', include('resume.urls')),
     path('signup/', TemplateView.as_view(template_name='auth/signup.html'), name='signup'),
     path('login/', TemplateView.as_view(template_name='auth/login.html'), name='login'),
     path('', TemplateView.as_view(template_name='dashboard.html'), name='dashboard'),  # Placeholder, can use a real dashboard template
