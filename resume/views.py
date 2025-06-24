@@ -22,7 +22,11 @@ class EducationViewSet(viewsets.ModelViewSet):
     serializer_class = EducationSerializer
 
     def get_queryset(self):
-        return Education.objects.filter(resume__user=self.request.user)
+        queryset = Education.objects.filter(resume__user=self.request.user)
+        resume_id = self.request.query_params.get('resume', None)
+        if resume_id is not None:
+            queryset = queryset.filter(resume=resume_id)
+        return queryset
 
 
 class ExperienceViewSet(viewsets.ModelViewSet):
@@ -30,7 +34,11 @@ class ExperienceViewSet(viewsets.ModelViewSet):
     serializer_class = ExperienceSerializer
 
     def get_queryset(self):
-        return Experience.objects.filter(resume__user=self.request.user)
+        queryset = Experience.objects.filter(resume__user=self.request.user)
+        resume_id = self.request.query_params.get('resume', None)
+        if resume_id is not None:
+            queryset = queryset.filter(resume=resume_id)
+        return queryset
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -38,7 +46,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
 
     def get_queryset(self):
-        return Project.objects.filter(resume__user=self.request.user)
+        queryset = Project.objects.filter(resume__user=self.request.user)
+        resume_id = self.request.query_params.get('resume', None)
+        if resume_id is not None:
+            queryset = queryset.filter(resume=resume_id)
+        return queryset
 
 
 class SkillViewSet(viewsets.ModelViewSet):
@@ -46,7 +58,11 @@ class SkillViewSet(viewsets.ModelViewSet):
     serializer_class = SkillSerializer
 
     def get_queryset(self):
-        return Skill.objects.filter(resume__user=self.request.user)
+        queryset = Skill.objects.filter(resume__user=self.request.user)
+        resume_id = self.request.query_params.get('resume', None)
+        if resume_id is not None:
+            queryset = queryset.filter(resume=resume_id)
+        return queryset
 
 
 class CertificationViewSet(viewsets.ModelViewSet):
@@ -54,7 +70,11 @@ class CertificationViewSet(viewsets.ModelViewSet):
     serializer_class = CertificationSerializer
 
     def get_queryset(self):
-        return Certification.objects.filter(resume__user=self.request.user)
+        queryset = Certification.objects.filter(resume__user=self.request.user)
+        resume_id = self.request.query_params.get('resume', None)
+        if resume_id is not None:
+            queryset = queryset.filter(resume=resume_id)
+        return queryset
 
 
 class AchievementViewSet(viewsets.ModelViewSet):
@@ -62,4 +82,8 @@ class AchievementViewSet(viewsets.ModelViewSet):
     serializer_class = AchievementSerializer
 
     def get_queryset(self):
-        return Achievement.objects.filter(resume__user=self.request.user)
+        queryset = Achievement.objects.filter(resume__user=self.request.user)
+        resume_id = self.request.query_params.get('resume', None)
+        if resume_id is not None:
+            queryset = queryset.filter(resume=resume_id)
+        return queryset
