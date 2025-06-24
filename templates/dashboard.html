@@ -1,27 +1,97 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Resume Builder{% endblock %}
+
 {% block content %}
-<div class="dashboard-welcome fade-in">
-  <h1>Welcome to Resume Builder</h1>
-  <p>Create professional resumes with ease using our intuitive builder</p>
-  
+<div class="dashboard-container">
+  <!-- Welcome Section -->
+  <div class="dashboard-welcome">
+    <h1>Welcome to Your Resume Dashboard</h1>
+    <p>Create, manage, and customize your professional resumes</p>
+  </div>
+
+  <!-- Dashboard Actions -->
   <div class="dashboard-actions">
-    <div class="action-card">
-      <h3>📝 Create New Resume</h3>
-      <p>Start building your professional resume from scratch with our guided templates</p>
-      <a href="#" class="btn">Get Started</a>
+    <h2 class="section-title">My Resumes</h2>
+    <button id="create-resume-btn" class="btn btn-primary">
+      ✨ Create New Resume
+    </button>
+  </div>
+
+  <!-- Resume List Section -->
+  <div id="resume-list" class="resume-grid">
+    <!-- Loading spinner -->
+    <div id="loading-spinner" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading your resumes...</p>
     </div>
-    
-    <div class="action-card">
-      <h3>📋 My Resumes</h3>
-      <p>View and manage all your saved resumes in one convenient location</p>
-      <a href="#" class="btn">View Resumes</a>
+
+    <!-- Empty state -->
+    <div id="empty-state" class="empty-state" style="display: none;">
+      <h3>No resumes yet</h3>
+      <p>Start building your professional resume by creating your first one. It's quick and easy!</p>
+      <button class="btn btn-primary" onclick="showCreateResumeModal()">
+        Create Your First Resume
+      </button>
     </div>
-    
-    <div class="action-card">
-      <h3>⚙️ Account Settings</h3>
-      <p>Update your profile information and manage your account preferences</p>
-      <a href="#" class="btn">Settings</a>
+
+    <!-- Resume cards will be dynamically inserted here -->
+  </div>
+</div>
+
+<!-- Create Resume Modal -->
+<div id="create-resume-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Create New Resume</h2>
+      <span class="close" id="close-create-modal">&times;</span>
+    </div>
+    <div class="modal-body">
+      <form id="create-resume-form">
+        <div class="form-group">
+          <label for="resume-title">Resume Title</label>
+          <input type="text" id="resume-title" name="title" placeholder="e.g., Software Developer Resume" required>
+          <small>Give your resume a descriptive name to help you identify it later.</small>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeCreateResumeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Resume</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
+
+<!-- Resume Actions Modal -->
+<div id="resume-actions-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Resume Actions</h2>
+      <span class="close" id="close-actions-modal">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div class="action-buttons">
+        <button class="action-btn" onclick="editResume()">
+          <span class="action-icon">✏️</span>
+          <span class="action-text">Edit Resume</span>
+        </button>
+        <button class="action-btn" onclick="viewResume()">
+          <span class="action-icon">👁️</span>
+          <span class="action-text">View Resume</span>
+        </button>
+        <button class="action-btn" onclick="duplicateResume()">
+          <span class="action-icon">📋</span>
+          <span class="action-text">Duplicate Resume</span>
+        </button>
+        <button class="action-btn danger" onclick="deleteResume()">
+          <span class="action-icon">🗑️</span>
+          <span class="action-text">Delete Resume</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}
