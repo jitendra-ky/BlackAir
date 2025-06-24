@@ -75,11 +75,10 @@ function createResumeCard(resume) {
             </div>
         </div>
     `);
-    
-    // Add click handler to open the resume
+      // Add click handler to open the resume
     resumeCard.click(function(e) {
         e.preventDefault();
-        viewResume(resume.id);
+        editResume(resume.id);
     });
     
     return resumeCard;
@@ -143,11 +142,8 @@ async function handleCreateResume(event) {
 function editResume(resumeId = selectedResumeId) {
     if (!resumeId) return;
     
-    // For now, just show an alert. In a real app, this would navigate to an edit page
-    const resume = resumes.find(r => r.id === resumeId);
-    if (resume) {
-        alert(`Edit functionality for "${resume.title}" would be implemented here.`);
-    }
+    // Navigate to the resume editor page
+    window.location.href = `/resume/${resumeId}/edit/`;
     closeResumeActionsModal();
 }
 

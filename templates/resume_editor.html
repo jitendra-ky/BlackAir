@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Resume - Resume Builder{% endblock %}
+
+{% block content %}
+<div class="editor-container">
+  <!-- Header Section -->
+  <div class="editor-header">
+    <div class="header-left">
+      <a href="/" class="back-link">← Back to Dashboard</a>
+      <h1 id="resume-title-display">Loading...</h1>
+    </div>
+    <div class="header-actions">
+      <button id="preview-btn" class="btn btn-outline">👁️ Preview</button>
+      <button id="save-btn" class="btn btn-primary">💾 Save Changes</button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div id="editor-loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Loading resume data...</p>
+  </div>
+
+  <!-- Main Editor Content -->
+  <div id="editor-content" class="editor-content" style="display: none;">
+    
+    <!-- Resume Title Section -->
+    <section class="editor-section" id="title-section">
+      <div class="section-header">
+        <h2>Resume Title</h2>
+      </div>
+      <div class="section-content">
+        <div class="form-group">
+          <input type="text" id="resume-title-input" class="form-control" placeholder="Enter resume title">
+        </div>
+      </div>
+    </section>
+
+    <!-- Education Section -->
+    <section class="editor-section" id="education-section">
+      <div class="section-header">
+        <h2>Education</h2>
+        <button class="btn btn-secondary add-item-btn" data-section="education">+ Add Education</button>
+      </div>
+      <div class="section-content">
+        <div id="education-items" class="items-container">
+          <!-- Education items will be dynamically inserted here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section class="editor-section" id="experience-section">
+      <div class="section-header">
+        <h2>Work Experience</h2>
+        <button class="btn btn-secondary add-item-btn" data-section="experience">+ Add Experience</button>
+      </div>
+      <div class="section-content">
+        <div id="experience-items" class="items-container">
+          <!-- Experience items will be dynamically inserted here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="editor-section" id="projects-section">
+      <div class="section-header">
+        <h2>Projects</h2>
+        <button class="btn btn-secondary add-item-btn" data-section="projects">+ Add Project</button>
+      </div>
+      <div class="section-content">
+        <div id="projects-items" class="items-container">
+          <!-- Project items will be dynamically inserted here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="editor-section" id="skills-section">
+      <div class="section-header">
+        <h2>Skills</h2>
+        <button class="btn btn-secondary add-item-btn" data-section="skills">+ Add Skill</button>
+      </div>
+      <div class="section-content">
+        <div id="skills-items" class="items-container">
+          <!-- Skill items will be dynamically inserted here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Certifications Section -->
+    <section class="editor-section" id="certifications-section">
+      <div class="section-header">
+        <h2>Certifications</h2>
+        <button class="btn btn-secondary add-item-btn" data-section="certifications">+ Add Certification</button>
+      </div>
+      <div class="section-content">
+        <div id="certifications-items" class="items-container">
+          <!-- Certification items will be dynamically inserted here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Achievements Section -->
+    <section class="editor-section" id="achievements-section">
+      <div class="section-header">
+        <h2>Achievements</h2>
+        <button class="btn btn-secondary add-item-btn" data-section="achievements">+ Add Achievement</button>
+      </div>
+      <div class="section-content">
+        <div id="achievements-items" class="items-container">
+          <!-- Achievement items will be dynamically inserted here -->
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- Success/Error Messages -->
+<div id="message-container"></div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Confirm Delete</h2>
+      <span class="close" id="close-delete-modal">&times;</span>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+      <div class="form-actions">
+        <button type="button" class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
+        <button type="button" id="confirm-delete-btn" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="{% static 'js/resume-editor.js' %}"></script>
+{% endblock %}
