@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder - {% block title %}Professional Resume Creator{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <nav>
+        <a href="/">🏠 Dashboard</a>
+        <a href="/login/" id="nav-login">Login</a>
+        <a href="/signup/" id="nav-signup">Sign Up</a>
+        <a href="#" id="nav-logout" style="display:none;">Logout</a>
+    </nav>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <script>
+      // Simple nav logic for login/logout
+      if (localStorage.getItem('accessToken')) {
+        document.getElementById('nav-login').style.display = 'none';
+        document.getElementById('nav-signup').style.display = 'none';
+        document.getElementById('nav-logout').style.display = '';
+      }
+      document.getElementById('nav-logout').onclick = function() {
+        localStorage.clear();
+        window.location.href = '/login/';
+      };
+    </script>
+</body>
+</html>
