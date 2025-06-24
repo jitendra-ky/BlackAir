@@ -2,6 +2,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.contrib.auth.models import User
+from .models import UserProfile  # Import the UserProfile model
 
 # Create your tests here.
 
@@ -124,4 +125,56 @@ class TokenRefreshViewTest(APITestCase):
         response = self.client.post(self.refresh_url, {
             'refresh': 'invalid_token'
         }, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class UserProfileViewTest(APITestCase):
+    def setUp(self):
+        self.url = reverse('user_profile')
+        self.user = User.objects.create_user(
+            username='profileuser',
+            email='profile@example.com',
+            password='profilepass123'
+        )
+        self.profile = UserProfile.objects.create(
+            user=self.user,
+            city='Los Angeles',
+            country='USA'
+        )
+        self.profile_data = {
+            'city': 'New York',
+            'country': 'USA'
+        }
+
+    def test_get_profile_unauthenticated(self):
+        """Test that unauthenticated users cannot access profile"""
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_profile_authenticated(self):
+        """Test that authenticated users can get their profile"""
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # print("Response data:", response.data)
+        self.assertEqual(response.data['user'], 'profileuser')
+        # Verify profile was created in database
+        self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
+
+    def test_update_profile_authenticated(self):
+        """Test that authenticated users can update their profile"""
+        self.client.force_authenticate(user=self.user)
+        response = self.client.put(self.url, self.profile_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['city'], 'New York')
+        self.assertEqual(response.data['country'], 'USA')
+        
+        # Verify profile was updated in database
+        profile = UserProfile.objects.get(user=self.user)
+        self.assertEqual(profile.city, 'New York')
+        self.assertEqual(profile.country, 'USA')
+
+    def test_update_profile_unauthenticated(self):
+        """Test that unauthenticated users cannot update profile"""
+        response = self.client.put(self.url, self.profile_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
