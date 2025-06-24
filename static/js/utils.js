@@ -3,6 +3,13 @@ export async function apiFetch(url, options = {}) {
   const fullUrl = url.startsWith('/api') ? url : base + url;
   const opts = { ...options };
   opts.headers = opts.headers || {};
+  
+  // Add authorization header if token exists
+  const token = localStorage.getItem('accessToken');
+  if (token) {
+    opts.headers['Authorization'] = `Bearer ${token}`;
+  }
+  
   // jQuery's ajax does not support FormData content-type override
   return new Promise((resolve, reject) => {
     $.ajax({

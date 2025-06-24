@@ -7,27 +7,111 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<body>
-    <nav>
+<body>    <nav>
         <a href="/">🏠 Dashboard</a>
-        <a href="/login/" id="nav-login">Login</a>
-        <a href="/signup/" id="nav-signup">Sign Up</a>
-        <a href="#" id="nav-logout" style="display:none;">Logout</a>
-    </nav>
-    <main>
+        <div class="nav-auth">
+            <a href="/login/" id="nav-login">Login</a>
+            <a href="/signup/" id="nav-signup">Sign Up</a>
+            <div class="user-profile-nav" id="user-profile-nav" style="display:none;">
+                <div class="user-avatar" id="user-avatar">
+                    👤 <span id="user-name">User</span>
+                </div>
+                <div class="profile-dropdown" id="profile-dropdown">
+                    <a href="#" id="view-profile">👤 View Profile</a>
+                    <a href="#" id="nav-logout">🚪 Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>    <main>
         {% block content %}{% endblock %}
     </main>
+
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👤 My Profile</h2>
+                <span class="close" id="close-profile-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label for="profile-username">Username:</label>
+                        <input type="text" id="profile-username" name="username" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-email">Email:</label>
+                        <input type="email" id="profile-email" name="email" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-city">City:</label>
+                        <input type="text" id="profile-city" name="city" placeholder="Enter your city">
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-country">Country:</label>
+                        <input type="text" id="profile-country" name="country" placeholder="Enter your country">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-profile">Cancel</button>
+                    </div>
+                </form>
+                <div id="profile-error" class="error-message" style="display:none;"></div>
+                <div id="profile-success" class="success-message" style="display:none;"></div>
+            </div>
+        </div>
+    </div>    <script src="/static/js/state.js" type="module"></script>
+    <script src="/static/js/utils.js" type="module"></script>
+    <script src="/static/js/auth.js" type="module"></script>
+    <script src="/static/js/profile.js" type="module"></script>
     <script>
       // Simple nav logic for login/logout
       if (localStorage.getItem('accessToken')) {
         document.getElementById('nav-login').style.display = 'none';
         document.getElementById('nav-signup').style.display = 'none';
-        document.getElementById('nav-logout').style.display = '';
+        document.getElementById('user-profile-nav').style.display = 'block';
+        
+        // Load user data
+        loadUserData();
       }
+      
+      // Logout functionality
       document.getElementById('nav-logout').onclick = function() {
         localStorage.clear();
         window.location.href = '/login/';
       };
+
+      // Profile dropdown toggle
+      document.getElementById('user-avatar').onclick = function(e) {
+        e.stopPropagation();
+        const dropdown = document.getElementById('profile-dropdown');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+      };
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function() {
+        document.getElementById('profile-dropdown').style.display = 'none';
+      });      // Load user data function
+      function loadUserData() {
+        $.ajax({
+          url: '/api/auth/user/',
+          type: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          },
+          success: function(userData) {
+            document.getElementById('user-name').textContent = userData.username;
+          },
+          error: function(xhr, status, error) {
+            console.error('Failed to load user data:', error);
+            if (xhr.status === 401) {
+              // Token might be expired, redirect to login
+              localStorage.clear();
+              window.location.href = '/login/';
+            }
+          }
+        });
+      }
     </script>
 </body>
 </html>
