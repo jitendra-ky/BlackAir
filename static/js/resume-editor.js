@@ -5,6 +5,17 @@ const appState = {
     resume: null,
     resumeId: null,
     hasUnsavedChanges: false,
+    header: {
+        name: '',
+        title: '',
+        phone: '',
+        email: '',
+        location: '',
+        linkedin: '',
+        github: '',
+        website: '',
+        twitter: ''
+    },
     sections: {
         education: [],
         experience: [],
@@ -43,6 +54,31 @@ function setupEventListeners() {
         const newTitle = $(this).val();
         $('#resume-title-display').text(newTitle);
         appState.resume.title = newTitle;
+        markAsChanged();
+    });
+    
+    // Header section event listeners
+    $('#edit-header-btn').click(function() {
+        $('#header-display').hide();
+        $('#header-form').show();
+    });
+    
+    $('#cancel-header-btn').click(function() {
+        loadHeaderData(); // Reset form to current state
+        $('#header-form').hide();
+        $('#header-display').show();
+    });
+    
+    $('#save-header-btn').click(function() {
+        saveHeaderData();
+        updateHeaderDisplay();
+        $('#header-form').hide();
+        $('#header-display').show();
+        markAsChanged();
+    });
+    
+    // Header form input listeners
+    $('#header-form input').on('input', function() {
         markAsChanged();
     });
     
@@ -103,6 +139,9 @@ function renderEditor() {
     // Set resume title
     $('#resume-title-display').text(appState.resume.title);
     $('#resume-title-input').val(appState.resume.title);
+    
+    // Initialize header
+    initializeHeader();
     
     // Render all sections
     renderEducationSection();
@@ -1187,3 +1226,123 @@ $('#confirm-delete-btn').click(function() {
 
 // Make functions available globally for onclick handlers
 window.closeDeleteModal = closeDeleteModal;
+
+// Header management functions
+function loadHeaderData() {
+    // Load header data from appState into form fields
+    $('#header-name').val(appState.header.name || '');
+    $('#header-title').val(appState.header.title || '');
+    $('#header-phone').val(appState.header.phone || '');
+    $('#header-email').val(appState.header.email || '');
+    $('#header-location').val(appState.header.location || '');
+    $('#header-linkedin').val(appState.header.linkedin || '');
+    $('#header-github').val(appState.header.github || '');
+    $('#header-website').val(appState.header.website || '');
+    $('#header-twitter').val(appState.header.twitter || '');
+}
+
+function saveHeaderData() {
+    // Save form data to appState
+    appState.header.name = $('#header-name').val();
+    appState.header.title = $('#header-title').val();
+    appState.header.phone = $('#header-phone').val();
+    appState.header.email = $('#header-email').val();
+    appState.header.location = $('#header-location').val();
+    appState.header.linkedin = $('#header-linkedin').val();
+    appState.header.github = $('#header-github').val();
+    appState.header.website = $('#header-website').val();
+    appState.header.twitter = $('#header-twitter').val();
+}
+
+function updateHeaderDisplay() {
+    // Update the header display with current data
+    const header = appState.header;
+    
+    // Update name (with title if available)
+    const displayName = header.name || 'Your Name';
+    $('#header-name-display').text(displayName);
+    
+    // Update contact information with individual elements
+    $('#header-contact-display').empty();
+    
+    if (header.phone) {
+        $('#header-contact-display').append(`<span class="bg-white/70 px-3 py-1 rounded-full font-medium">${escapeHtml(header.phone)}</span>`);
+    }
+    if (header.email) {
+        $('#header-contact-display').append(`<span class="bg-white/70 px-3 py-1 rounded-full font-medium">${escapeHtml(header.email)}</span>`);
+    }
+    if (header.location) {
+        $('#header-contact-display').append(`<span class="bg-white/70 px-3 py-1 rounded-full font-medium">${escapeHtml(header.location)}</span>`);
+    }
+    
+    // Show placeholder if no contact info
+    if (!header.phone && !header.email && !header.location) {
+        $('#header-contact-display').append('<span class="text-gray-400 text-sm">No contact information added</span>');
+    }
+    
+    // Update social links
+    $('#header-links-display').empty();
+    const links = [];
+    
+    if (header.linkedin) {
+        links.push({
+            url: header.linkedin,
+            text: 'LinkedIn',
+            icon: '💼'
+        });
+    }
+    if (header.github) {
+        links.push({
+            url: header.github,
+            text: 'GitHub',
+            icon: '💻'
+        });
+    }
+    if (header.website) {
+        links.push({
+            url: header.website,
+            text: 'Portfolio',
+            icon: '🌐'
+        });
+    }
+    if (header.twitter) {
+        links.push({
+            url: header.twitter,
+            text: 'Twitter',
+            icon: '🐦'
+        });
+    }
+    
+    if (links.length > 0) {
+        links.forEach(link => {
+            $('#header-links-display').append(`
+                <a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" 
+                   class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-all duration-200 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-full border border-blue-200 hover:border-blue-300 hover:-translate-y-0.5">
+                    <span>${link.icon}</span>
+                    <span>${escapeHtml(link.text)}</span>
+                </a>
+            `);
+        });
+    } else {
+        $('#header-links-display').append('<span class="text-gray-400 text-sm">Click "Edit Header" to add professional links</span>');
+    }
+}
+
+function initializeHeader() {
+    // Initialize header with sample data if empty
+    if (!appState.header.name) {
+        appState.header = {
+            name: 'Your Name',
+            title: 'Professional Title',
+            phone: '+1 (555) 123-4567',
+            email: 'your.email@example.com',
+            location: 'City, State',
+            linkedin: '',
+            github: '',
+            website: '',
+            twitter: ''
+        };
+    }
+    loadHeaderData();
+    updateHeaderDisplay();
+}
