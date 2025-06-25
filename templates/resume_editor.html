@@ -4,67 +4,71 @@
 {% block title %}Edit Resume - Resume Builder{% endblock %}
 
 {% block content %}
-<div class="editor-container max-w-5xl mx-auto p-6">
-  <!-- Header Section -->
-  <div class="editor-header flex justify-between items-center border-b pb-4 mb-8">
-    <div class="header-left">
-      <a href="/" class="text-sm text-gray-500 hover:text-brand-blue mb-1 block">← Dashboard</a>
-      <h1 id="resume-title-display" class="text-2xl font-semibold text-gray-900">Loading...</h1>
-      <div id="unsaved-indicator" class="text-xs text-amber-600 font-medium hidden">
-        <span class="inline-block w-2 h-2 bg-amber-400 rounded-full mr-1"></span>
-        Unsaved changes
-      </div>
-    </div>
-    <div class="header-actions flex gap-2">
-      <button id="cancel-all-btn" class="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200 hidden">
-        ↺ Cancel Changes
-      </button>
-      <button id="preview-btn" class="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
-        👁️ Preview
-      </button>
-      <button id="save-btn" class="px-4 py-2 text-sm bg-brand-blue text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-        💾 Save Changes
-      </button>
-    </div>
-  </div>
-
-  <!-- Loading State -->
-  <div id="editor-loading" class="text-center py-16">
-    <div class="w-6 h-6 border-2 border-gray-200 border-t-brand-blue rounded-full animate-spin mx-auto mb-2"></div>
-    <p class="text-sm text-gray-500">Loading...</p>
-  </div>
-
-  <!-- Main Editor Content -->
-  <div id="editor-content" class="space-y-8 hidden">
-    
-    <!-- Resume Title Section -->
-    <section class="border-l-4 border-brand-blue pl-4" id="title-section">
-      <h2 class="text-lg font-medium text-gray-900 mb-3">Resume Title</h2>
-      <input type="text" id="resume-title-input" class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:border-brand-blue" placeholder="Enter resume title">
-    </section>
-
-    <!-- Header Section -->
-    <section class="border-l-4 border-brand-blue pl-4 mb-8" id="header-section">
-      <div class="flex justify-between items-center mb-4 pb-2 border-b-2 border-gray-200">
-        <h2 class="text-xl font-semibold text-gray-800">Header Information</h2>
-        <button class="text-sm text-brand-blue hover:text-blue-600 font-medium transition-colors duration-200" id="edit-header-btn">✏️ Edit Header</button>
-      </div>
-      
-      <!-- Header Display -->
-      <div id="header-display" class="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-lg p-6 mb-3 transition-all duration-300 hover:border-slate-300 hover:shadow-lg">
-        <div class="text-center">
-          <h3 id="header-name-display" class="text-2xl font-bold text-slate-900 mb-3">Your Name</h3>
-          <div id="header-contact-display" class="flex flex-wrap justify-center gap-3 text-sm text-slate-600 mb-3">
-            <span class="bg-white/70 px-3 py-1 rounded-full font-medium">+1 (555) 123-4567</span>
-            <span class="bg-white/70 px-3 py-1 rounded-full font-medium">your.email@example.com</span>
-            <span class="bg-white/70 px-3 py-1 rounded-full font-medium">City, State</span>
-          </div>
-          <div id="header-links-display" class="flex flex-wrap justify-center gap-3 text-sm">
-            <!-- Social links will be displayed here -->
-            <span class="text-gray-400 text-sm">Click "Edit Header" to add professional links</span>
+<!-- Main Container with Split Layout -->
+<div class="flex bg-gray-100 overflow-hidden" style="height: calc(100vh - 64px);">
+  <!-- Left Half - Editor (Full width on small screens, half on large) -->
+  <div class="w-full lg:w-1/2 h-full overflow-y-auto bg-white">
+    <div class="editor-container p-6">
+      <!-- Header Section -->
+      <div class="editor-header flex justify-between items-center border-b pb-4 mb-8">
+        <div class="header-left">
+          <a href="/" class="text-sm text-gray-500 hover:text-brand-blue mb-1 block">← Dashboard</a>
+          <h1 id="resume-title-display" class="text-2xl font-semibold text-gray-900">Loading...</h1>
+          <div id="unsaved-indicator" class="text-xs text-amber-600 font-medium hidden">
+            <span class="inline-block w-2 h-2 bg-amber-400 rounded-full mr-1"></span>
+            Unsaved changes
           </div>
         </div>
+        <div class="header-actions flex gap-2">
+          <button id="cancel-all-btn" class="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200 hidden">
+            ↺ Cancel Changes
+          </button>
+          <button id="preview-btn" class="lg:hidden px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+            👁️ Preview
+          </button>
+          <button id="save-btn" class="px-4 py-2 text-sm bg-brand-blue text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+            💾 Save Changes
+          </button>
+        </div>
       </div>
+
+      <!-- Loading State -->
+      <div id="editor-loading" class="text-center py-16">
+        <div class="w-6 h-6 border-2 border-gray-200 border-t-brand-blue rounded-full animate-spin mx-auto mb-2"></div>
+        <p class="text-sm text-gray-500">Loading...</p>
+      </div>
+
+      <!-- Main Editor Content -->
+      <div id="editor-content" class="space-y-8 hidden">
+        
+        <!-- Resume Title Section -->
+        <section class="border-l-4 border-brand-blue pl-4" id="title-section">
+          <h2 class="text-lg font-medium text-gray-900 mb-3">Resume Title</h2>
+          <input type="text" id="resume-title-input" class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:border-brand-blue" placeholder="Enter resume title">
+        </section>
+
+        <!-- Header Section -->
+        <section class="border-l-4 border-brand-blue pl-4 mb-8" id="header-section">
+          <div class="flex justify-between items-center mb-4 pb-2 border-b-2 border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800">Header Information</h2>
+            <button class="text-sm text-brand-blue hover:text-blue-600 font-medium transition-colors duration-200" id="edit-header-btn">✏️ Edit Header</button>
+          </div>
+          
+          <!-- Header Display -->
+          <div id="header-display" class="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-lg p-6 mb-3 transition-all duration-300 hover:border-slate-300 hover:shadow-lg">
+            <div class="text-center">
+              <h3 id="header-name-display" class="text-2xl font-bold text-slate-900 mb-3">Your Name</h3>
+              <div id="header-contact-display" class="flex flex-wrap justify-center gap-3 text-sm text-slate-600 mb-3">
+                <span class="bg-white/70 px-3 py-1 rounded-full font-medium">+1 (555) 123-4567</span>
+                <span class="bg-white/70 px-3 py-1 rounded-full font-medium">your.email@example.com</span>
+                <span class="bg-white/70 px-3 py-1 rounded-full font-medium">City, State</span>
+              </div>
+              <div id="header-links-display" class="flex flex-wrap justify-center gap-3 text-sm">
+                <!-- Social links will be displayed here -->
+                <span class="text-gray-400 text-sm">Click "Edit Header" to add professional links</span>
+              </div>
+            </div>
+          </div>
       
       <!-- Header Form -->
       <div id="header-form" class="bg-white border border-gray-200 rounded-lg p-6 hidden transition-all duration-300">
@@ -232,17 +236,69 @@
       </div>
     </section>
 
-    <!-- Achievements Section -->
-    <section class="border-l-4 border-brand-blue pl-4" id="achievements-section">
-      <div class="flex justify-between items-center mb-3">
-        <h2 class="text-lg font-medium text-gray-900">Achievements</h2>
-        <button class="text-sm text-brand-blue hover:text-blue-600 add-item-btn" data-section="achievements">+ Add</button>
-      </div>
-      <div id="achievements-items" class="space-y-3">
-        <!-- Achievement items will be dynamically inserted here -->
-      </div>
-    </section>
+        <!-- Achievements Section -->
+        <section class="border-l-4 border-brand-blue pl-4" id="achievements-section">
+          <div class="flex justify-between items-center mb-3">
+            <h2 class="text-lg font-medium text-gray-900">Achievements</h2>
+            <button class="text-sm text-brand-blue hover:text-blue-600 add-item-btn" data-section="achievements">+ Add</button>
+          </div>
+          <div id="achievements-items" class="space-y-3">
+            <!-- Achievement items will be dynamically inserted here -->
+          </div>
+        </section>
 
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Half - Preview (Hidden on small screens, visible on large) -->
+  <div class="hidden lg:block lg:w-1/2 h-full bg-gray-50 border-l border-gray-300 overflow-y-auto">
+    <!-- Preview Header -->
+    <div class="flex justify-between items-center p-4 border-b bg-white">
+      <h3 class="text-lg font-semibold text-gray-900">Resume Preview</h3>
+      <button id="desktop-download-btn" class="px-4 py-2 text-sm bg-brand-blue text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+        📄 Download PDF
+      </button>
+    </div>
+    
+    <!-- Preview Content -->
+    <div class="p-4">
+      <div class="text-center py-16">
+        <h2 class="text-2xl font-semibold text-gray-700">This is preview</h2>
+        <p class="text-gray-500 mt-2">Live preview will be displayed here</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Preview Modal for Small Screens -->
+<div id="preview-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center hidden lg:hidden">
+  <div class="bg-white rounded-lg w-full h-full max-w-4xl max-h-[90vh] mx-4 flex flex-col">
+    <!-- Modal Header -->
+    <div class="flex justify-between items-center p-4 border-b bg-gray-50 rounded-t-lg">
+      <h3 class="text-lg font-semibold text-gray-900">Resume Preview</h3>
+      <button id="close-preview-modal" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+    </div>
+    
+    <!-- Modal Content -->
+    <div class="flex-1 overflow-y-auto p-4">
+      <div class="text-center py-16">
+        <h2 class="text-2xl font-semibold text-gray-700">This is preview</h2>
+        <p class="text-gray-500 mt-2">Preview content will be displayed here</p>
+      </div>
+    </div>
+    
+    <!-- Modal Footer -->
+    <div class="p-4 border-t bg-gray-50 rounded-b-lg">
+      <div class="flex justify-end gap-2">
+        <button id="modal-close-btn" class="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200">
+          Close
+        </button>
+        <button id="modal-download-btn" class="px-4 py-2 text-sm bg-brand-blue text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+          📄 Download PDF
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -266,4 +322,85 @@
 </div>
 
 <script type="module" src="{% static 'js/resume-editor.js' %}"></script>
+<script>
+// Preview Modal functionality for responsive design
+document.addEventListener('DOMContentLoaded', function() {
+    const previewBtn = document.getElementById('preview-btn');
+    const previewModal = document.getElementById('preview-modal');
+    const closePreviewModal = document.getElementById('close-preview-modal');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalDownloadBtn = document.getElementById('modal-download-btn');
+    const desktopDownloadBtn = document.getElementById('desktop-download-btn');
+    
+    // Function to open preview modal on small screens
+    function openPreviewModal() {
+        // Check if we're on a small screen
+        if (window.innerWidth < 1024) { // lg breakpoint in Tailwind
+            previewModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+    }
+    
+    // Function to close preview modal
+    function closeModal() {
+        previewModal.classList.add('hidden');
+        document.body.style.overflow = 'auto'; // Restore scrolling
+    }
+    
+    // Function to handle download (placeholder - replace with actual download logic)
+    function handleDownload() {
+        // TODO: Implement actual PDF download functionality
+        console.log('Downloading PDF...');
+        alert('PDF download functionality will be implemented here');
+    }
+    
+    // Event listeners
+    if (previewBtn) {
+        previewBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openPreviewModal();
+        });
+    }
+    
+    if (closePreviewModal) {
+        closePreviewModal.addEventListener('click', closeModal);
+    }
+    
+    if (modalCloseBtn) {
+        modalCloseBtn.addEventListener('click', closeModal);
+    }
+    
+    // Download button event listeners
+    if (modalDownloadBtn) {
+        modalDownloadBtn.addEventListener('click', handleDownload);
+    }
+    
+    if (desktopDownloadBtn) {
+        desktopDownloadBtn.addEventListener('click', handleDownload);
+    }
+    
+    // Close modal when clicking outside
+    if (previewModal) {
+        previewModal.addEventListener('click', function(e) {
+            if (e.target === previewModal) {
+                closeModal();
+            }
+        });
+    }
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && previewModal && !previewModal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+    
+    // Handle window resize - close modal if switching to large screen
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024 && previewModal && !previewModal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+});
+</script>
 {% endblock %}
