@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react';
-import { resumeAPI } from '../services/api';
+import { 
+  resumeAPI, 
+  educationAPI, 
+  experienceAPI, 
+  skillsAPI, 
+  projectsAPI, 
+  certificationsAPI, 
+  achievementsAPI 
+} from '../services/api';
 import toast from 'react-hot-toast';
 
 export const useResume = (resumeId) => {
@@ -13,13 +21,44 @@ export const useResume = (resumeId) => {
     
     try {
       setLoading(true);
-      const data = await resumeAPI.getResume(resumeId);
-      setResume(data);
+      
+      // Fetch resume basic data and all sections in parallel
+      const [
+        resumeData,
+        education,
+        experience,
+        skills,
+        projects,
+        certifications,
+        achievements
+      ] = await Promise.all([
+        resumeAPI.getResume(resumeId),
+        educationAPI.getEducation(resumeId),
+        experienceAPI.getExperience(resumeId),
+        skillsAPI.getSkills(resumeId),
+        projectsAPI.getProjects(resumeId),
+        certificationsAPI.getCertifications(resumeId),
+        achievementsAPI.getAchievements(resumeId)
+      ]);
+
+      // Combine resume data with all sections
+      const completeResumeData = {
+        ...resumeData,
+        education,
+        experience,
+        skills,
+        projects,
+        certifications,
+        achievements
+      };
+
+      setResume(completeResumeData);
       setError(null);
       setHasUnsavedChanges(false);
     } catch (err) {
       setError(err.message);
       toast.error('Failed to load resume');
+      console.error('Error loading resume:', err);
     } finally {
       setLoading(false);
     }

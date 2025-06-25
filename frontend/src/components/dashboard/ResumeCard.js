@@ -11,8 +11,19 @@ import {
 import { formatDate } from '../../utils/helpers';
 
 const ResumeCard = ({ resume, onEdit, onView, onDuplicate, onDelete }) => {
+  const handleCardClick = (e) => {
+    // Don't trigger card click if clicking on dropdown, buttons, or interactive elements
+    if (e.target.closest('button, [role="button"], .dropdown-trigger')) {
+      return;
+    }
+    onEdit();
+  };
+
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+    <div 
+      className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer" 
+      onClick={handleCardClick}
+    >
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -26,7 +37,7 @@ const ResumeCard = ({ resume, onEdit, onView, onDuplicate, onDelete }) => {
         
         <Dropdown
           trigger={
-            <button className="p-1 text-gray-400 hover:text-gray-600 rounded">
+            <button className="dropdown-trigger p-1 text-gray-400 hover:text-gray-600 rounded">
               <EllipsisVerticalIcon className="h-5 w-5" />
             </button>
           }
