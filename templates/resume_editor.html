@@ -4,115 +4,97 @@
 {% block title %}Edit Resume - Resume Builder{% endblock %}
 
 {% block content %}
-<div class="editor-container">
+<div class="editor-container max-w-5xl mx-auto p-6">
   <!-- Header Section -->
-  <div class="editor-header">
+  <div class="editor-header flex justify-between items-center border-b pb-4 mb-8">
     <div class="header-left">
-      <a href="/" class="back-link">← Back to Dashboard</a>
-      <h1 id="resume-title-display">Loading...</h1>
+      <a href="/" class="text-sm text-gray-500 hover:text-brand-blue mb-1 block">← Dashboard</a>
+      <h1 id="resume-title-display" class="text-2xl font-semibold text-gray-900">Loading...</h1>
     </div>
-    <div class="header-actions">
-      <button id="preview-btn" class="btn btn-outline">👁️ Preview</button>
-      <button id="save-btn" class="btn btn-primary">💾 Save Changes</button>
+    <div class="header-actions flex gap-2">
+      <button id="preview-btn" class="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded hover:bg-gray-50">Preview</button>
+      <button id="save-btn" class="px-4 py-2 text-sm bg-brand-blue text-white rounded hover:bg-blue-600">Save</button>
     </div>
   </div>
 
   <!-- Loading State -->
-  <div id="editor-loading" class="loading-spinner">
-    <div class="spinner"></div>
-    <p>Loading resume data...</p>
+  <div id="editor-loading" class="text-center py-16">
+    <div class="w-6 h-6 border-2 border-gray-200 border-t-brand-blue rounded-full animate-spin mx-auto mb-2"></div>
+    <p class="text-sm text-gray-500">Loading...</p>
   </div>
 
   <!-- Main Editor Content -->
-  <div id="editor-content" class="editor-content" style="display: none;">
+  <div id="editor-content" class="space-y-8 hidden">
     
     <!-- Resume Title Section -->
-    <section class="editor-section" id="title-section">
-      <div class="section-header">
-        <h2>Resume Title</h2>
-      </div>
-      <div class="section-content">
-        <div class="form-group">
-          <input type="text" id="resume-title-input" class="form-control" placeholder="Enter resume title">
-        </div>
-      </div>
+    <section class="border-l-4 border-brand-blue pl-4" id="title-section">
+      <h2 class="text-lg font-medium text-gray-900 mb-3">Resume Title</h2>
+      <input type="text" id="resume-title-input" class="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:border-brand-blue" placeholder="Enter resume title">
     </section>
 
     <!-- Education Section -->
-    <section class="editor-section" id="education-section">
-      <div class="section-header">
-        <h2>Education</h2>
-        <button class="btn btn-secondary add-item-btn" data-section="education">+ Add Education</button>
+    <section class="border-l-4 border-brand-blue pl-4" id="education-section">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-lg font-medium text-gray-900">Education</h2>
+        <button class="text-sm text-brand-blue hover:text-blue-600 add-item-btn" data-section="education">+ Add</button>
       </div>
-      <div class="section-content">
-        <div id="education-items" class="items-container">
-          <!-- Education items will be dynamically inserted here -->
-        </div>
+      <div id="education-items" class="space-y-3">
+        <!-- Education items will be dynamically inserted here -->
       </div>
     </section>
 
     <!-- Experience Section -->
-    <section class="editor-section" id="experience-section">
-      <div class="section-header">
-        <h2>Work Experience</h2>
-        <button class="btn btn-secondary add-item-btn" data-section="experience">+ Add Experience</button>
+    <section class="border-l-4 border-brand-blue pl-4" id="experience-section">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-lg font-medium text-gray-900">Work Experience</h2>
+        <button class="text-sm text-brand-blue hover:text-blue-600 add-item-btn" data-section="experience">+ Add</button>
       </div>
-      <div class="section-content">
-        <div id="experience-items" class="items-container">
-          <!-- Experience items will be dynamically inserted here -->
-        </div>
+      <div id="experience-items" class="space-y-3">
+        <!-- Experience items will be dynamically inserted here -->
       </div>
     </section>
 
     <!-- Projects Section -->
-    <section class="editor-section" id="projects-section">
-      <div class="section-header">
-        <h2>Projects</h2>
-        <button class="btn btn-secondary add-item-btn" data-section="projects">+ Add Project</button>
+    <section class="border-l-4 border-brand-blue pl-4" id="projects-section">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-lg font-medium text-gray-900">Projects</h2>
+        <button class="text-sm text-brand-blue hover:text-blue-600 add-item-btn" data-section="projects">+ Add</button>
       </div>
-      <div class="section-content">
-        <div id="projects-items" class="items-container">
-          <!-- Project items will be dynamically inserted here -->
-        </div>
+      <div id="projects-items" class="space-y-3">
+        <!-- Project items will be dynamically inserted here -->
       </div>
     </section>
 
     <!-- Skills Section -->
-    <section class="editor-section" id="skills-section">
-      <div class="section-header">
-        <h2>Skills</h2>
-        <button class="btn btn-secondary add-item-btn" data-section="skills">+ Add Skill</button>
+    <section class="border-l-4 border-brand-blue pl-4" id="skills-section">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-lg font-medium text-gray-900">Skills</h2>
+        <button class="text-sm text-brand-blue hover:text-blue-600 add-item-btn" data-section="skills">+ Add</button>
       </div>
-      <div class="section-content">
-        <div id="skills-items" class="items-container">
-          <!-- Skill items will be dynamically inserted here -->
-        </div>
+      <div id="skills-items" class="space-y-3">
+        <!-- Skill items will be dynamically inserted here -->
       </div>
     </section>
 
     <!-- Certifications Section -->
-    <section class="editor-section" id="certifications-section">
-      <div class="section-header">
-        <h2>Certifications</h2>
-        <button class="btn btn-secondary add-item-btn" data-section="certifications">+ Add Certification</button>
+    <section class="border-l-4 border-brand-blue pl-4" id="certifications-section">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-lg font-medium text-gray-900">Certifications</h2>
+        <button class="text-sm text-brand-blue hover:text-blue-600 add-item-btn" data-section="certifications">+ Add</button>
       </div>
-      <div class="section-content">
-        <div id="certifications-items" class="items-container">
-          <!-- Certification items will be dynamically inserted here -->
-        </div>
+      <div id="certifications-items" class="space-y-3">
+        <!-- Certification items will be dynamically inserted here -->
       </div>
     </section>
 
     <!-- Achievements Section -->
-    <section class="editor-section" id="achievements-section">
-      <div class="section-header">
-        <h2>Achievements</h2>
-        <button class="btn btn-secondary add-item-btn" data-section="achievements">+ Add Achievement</button>
+    <section class="border-l-4 border-brand-blue pl-4" id="achievements-section">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-lg font-medium text-gray-900">Achievements</h2>
+        <button class="text-sm text-brand-blue hover:text-blue-600 add-item-btn" data-section="achievements">+ Add</button>
       </div>
-      <div class="section-content">
-        <div id="achievements-items" class="items-container">
-          <!-- Achievement items will be dynamically inserted here -->
-        </div>
+      <div id="achievements-items" class="space-y-3">
+        <!-- Achievement items will be dynamically inserted here -->
       </div>
     </section>
 
@@ -123,17 +105,16 @@
 <div id="message-container"></div>
 
 <!-- Delete Confirmation Modal -->
-<div id="delete-modal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>Confirm Delete</h2>
-      <span class="close" id="close-delete-modal">&times;</span>
+<div id="delete-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center hidden">
+  <div class="bg-white rounded w-full max-w-sm mx-4">
+    <div class="p-4 border-b">
+      <h3 class="font-medium text-gray-900">Confirm Delete</h3>
     </div>
-    <div class="modal-body">
-      <p>Are you sure you want to delete this item? This action cannot be undone.</p>
-      <div class="form-actions">
-        <button type="button" class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
-        <button type="button" id="confirm-delete-btn" class="btn btn-danger">Delete</button>
+    <div class="p-4">
+      <p class="text-sm text-gray-600 mb-4">Are you sure you want to delete this item?</p>
+      <div class="flex gap-2 justify-end">
+        <button type="button" class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50" onclick="closeDeleteModal()">Cancel</button>
+        <button type="button" id="confirm-delete-btn" class="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
       </div>
     </div>
   </div>

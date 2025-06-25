@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="auth-container">
-  <div class="auth-form">
-    <h2>Welcome Back</h2>
+<div class="auth-container flex items-center justify-center min-h-[50vh]">
+  <div class="auth-form bg-white p-8 rounded border w-full max-w-sm">
+    <h2 class="text-xl font-medium mb-6 text-gray-900 text-center">Welcome Back</h2>
     <form id="login-form">
-      <input type="text" name="username" placeholder="Username" required>
-      <input type="password" name="password" placeholder="Password" required>
-      <button type="submit">Login</button>
+      <input type="text" name="username" placeholder="Username" required class="w-full px-3 py-2 mb-3 border rounded text-sm focus:outline-none focus:border-brand-blue">
+      <input type="password" name="password" placeholder="Password" required class="w-full px-3 py-2 mb-4 border rounded text-sm focus:outline-none focus:border-brand-blue">
+      <button type="submit" class="w-full bg-brand-blue text-white py-2 rounded text-sm hover:bg-blue-600">Login</button>
     </form>
-    <div id="login-error"></div>
-    <div class="auth-links">
-      <p>Don't have an account? <a href="/signup/">Sign up here</a></p>
+    <div id="login-error" class="text-red-600 bg-red-50 p-3 rounded mt-3 border border-red-200 text-sm hidden"></div>
+    <div class="auth-links text-center mt-6">
+      <p class="text-gray-600 text-sm">Don't have an account? <a href="/signup/" class="text-brand-blue hover:underline">Sign up here</a></p>
     </div>
   </div>
 </div>
