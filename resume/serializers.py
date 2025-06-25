@@ -6,7 +6,9 @@ class ResumeSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Resume
-        fields = ['id', 'title', 'user', 'uuid', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'user', 'uuid', 'name', 'professional_title', 'phone', 
+                 'email', 'location', 'linkedin_url', 'github_url', 'website_url', 
+                 'twitter_url', 'created_at', 'updated_at']
         read_only_fields = ['id', 'user', 'uuid', 'created_at', 'updated_at']
 
 

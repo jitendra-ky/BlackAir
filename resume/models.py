@@ -7,6 +7,20 @@ class Resume(models.Model):
     title = models.CharField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='resumes')
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    
+    # Header Information
+    name = models.CharField(max_length=200, blank=True, help_text="Full name for the resume header")
+    professional_title = models.CharField(max_length=200, blank=True, help_text="Professional title/job position")
+    phone = models.CharField(max_length=20, blank=True, help_text="Phone number")
+    email = models.EmailField(blank=True, help_text="Email address")
+    location = models.CharField(max_length=200, blank=True, help_text="City, State or City, Country")
+    
+    # Professional Links
+    linkedin_url = models.URLField(blank=True, help_text="LinkedIn profile URL")
+    github_url = models.URLField(blank=True, help_text="GitHub profile URL")
+    website_url = models.URLField(blank=True, help_text="Portfolio/personal website URL")
+    twitter_url = models.URLField(blank=True, help_text="Twitter profile URL")
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
