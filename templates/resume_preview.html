@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume - {% block title %}Professional Resume{% endblock %}</title>
+    <style>
+        /* Base styles for print and preview */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+        }
+        
+        .resume-container {
+            max-width: 210mm; /* A4 width */
+            margin: 0 auto;
+            padding: 15mm; /* Reduced A4 margins */
+            background: white;
+            min-height: 297mm; /* A4 height */
+            position: relative;
+        }
+        
+        /* Page break indicator */
+        .page-break-indicator {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            border-top: 2px dashed #e74c3c;
+            background: transparent;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        .page-break-indicator::before {
+            content: "Page Break";
+            position: absolute;
+            right: 10px;
+            top: -12px;
+            background: white;
+            color: #e74c3c;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 0 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Position page break at A4 height minus padding */
+        .page-break-1 {
+            top: calc(297mm - 30mm); /* A4 height minus top/bottom padding */
+        }
+        
+        .page-break-2 {
+            top: calc(594mm - 45mm); /* Second page break */
+        }
+        
+        /* Header Section */
+        .resume-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.75rem;
+        }
+        
+        .resume-name {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            color: #2c3e50;
+        }
+        
+        .resume-title {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            margin-bottom: 0.75rem;
+        }
+        
+        .resume-contact {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .contact-link {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .contact-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Section Styles */
+        .resume-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.2rem;
+            border-bottom: 1px solid #bdc3c7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .section-content {
+            margin-left: 0.25rem;
+        }
+        
+        /* Summary Section */
+        .resume-summary {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            text-align: justify;
+        }
+        
+        /* Experience and Education Items */
+        .experience-item,
+        .education-item,
+        .project-item,
+        .certification-item,
+        .achievement-item {
+            margin-bottom: 1rem;
+            page-break-inside: avoid;
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.25rem;
+        }
+        
+        .item-title {
+            font-weight: bold;
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+        
+        .item-subtitle {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-bottom: 0.1rem;
+            font-size: 0.9rem;
+        }
+        
+        .item-dates {
+            font-size: 0.85rem;
+            color: #95a5a6;
+            white-space: nowrap;
+        }
+        
+        .item-location {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+        
+        .item-description {
+            margin-top: 0.25rem;
+            line-height: 1.4;
+            font-size: 0.9rem;
+        }
+        
+        .item-description ul {
+            margin-left: 1.25rem;
+            margin-top: 0.25rem;
+        }
+        
+        .item-description li {
+            margin-bottom: 0.15rem;
+        }
+        
+        /* Skills Section */
+        .skills-container {
+            display: block;
+        }
+        
+        .skill-category {
+            margin-bottom: 0.5rem;
+        }
+        
+        .skill-category-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            margin-bottom: 0.2rem;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        
+        .skills-list {
+            display: inline;
+        }
+        
+        .skill-item {
+            font-size: 0.85rem;
+            color: #333;
+            margin-right: 0.25rem;
+        }
+        
+        .skill-item:not(:last-child):after {
+            content: " • ";
+            color: #bdc3c7;
+            margin-left: 0.25rem;
+        }
+        
+        .skill-level {
+            display: none;
+        }
+        
+        /* Project specific styles */
+        .project-technologies {
+            margin-top: 0.3rem;
+        }
+        
+        .tech-tag {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 0.1rem 0.4rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            margin-right: 0.4rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        .project-links {
+            margin-top: 0.3rem;
+        }
+        
+        .project-link {
+            color: #3498db;
+            text-decoration: none;
+            margin-right: 0.75rem;
+            font-size: 0.85rem;
+        }
+        
+        .project-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Certification specific styles */
+        .certification-details {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-top: 0.2rem;
+        }
+        
+        .credential-info {
+            margin-top: 0.3rem;
+            font-size: 0.8rem;
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                font-size: 10pt;
+                line-height: 1.2;
+            }
+            
+            .resume-container {
+                padding: 12mm; /* Reduced padding for print */
+                margin: 0;
+                max-width: none;
+            }
+            
+            /* Hide page break indicators when printing */
+            .page-break-indicator {
+                display: none !important;
+            }
+            
+            .resume-section {
+                page-break-inside: avoid;
+                margin-bottom: 1rem;
+            }
+            
+            .experience-item,
+            .education-item,
+            .project-item,
+            .certification-item,
+            .achievement-item {
+                page-break-inside: avoid;
+                margin-bottom: 0.75rem;
+            }
+            
+            .contact-link {
+                color: #333 !important;
+            }
+            
+            .resume-header {
+                margin-bottom: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .resume-name {
+                font-size: 1.8rem;
+            }
+        }
+        
+        /* Empty state styles */
+        .empty-section {
+            color: #bdc3c7;
+            font-style: italic;
+            text-align: center;
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <!-- Page Break Indicators -->
+        <div class="page-break-indicator page-break-1"></div>
+        <div class="page-break-indicator page-break-2"></div>
+        
+        <!-- Header Section -->
+        <header class="resume-header">
+            <h1 class="resume-name" id="resume-name">Alex Johnson</h1>
+            <div class="resume-title" id="resume-professional-title">Senior Full Stack Developer</div>
+            <div class="resume-contact" id="resume-contact">
+                <div class="contact-item" id="contact-phone">
+                    <span>📞</span>
+                    <span class="contact-phone">+1 (555) 123-4567</span>
+                </div>
+                <div class="contact-item" id="contact-email">
+                    <span>✉️</span>
+                    <a href="mailto:alex.johnson@email.com" class="contact-link contact-email">alex.johnson@email.com</a>
+                </div>
+                <div class="contact-item" id="contact-location">
+                    <span>📍</span>
+                    <span class="contact-location">San Francisco, CA</span>
+                </div>
+                <div class="contact-item" id="contact-linkedin">
+                    <span>💼</span>
+                    <a href="https://linkedin.com/in/alexjohnson" class="contact-link contact-linkedin" target="_blank">LinkedIn</a>
+                </div>
+                <div class="contact-item" id="contact-github">
+                    <span>🔗</span>
+                    <a href="https://github.com/alexjohnson" class="contact-link contact-github" target="_blank">GitHub</a>
+                </div>
+                <div class="contact-item" id="contact-website">
+                    <span>🌐</span>
+                    <a href="https://alexjohnson.dev" class="contact-link contact-website" target="_blank">Portfolio</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Summary Section -->
+        <section class="resume-section" id="summary-section">
+            <h2 class="section-title">Professional Summary</h2>
+            <div class="section-content">
+                <div class="resume-summary" id="resume-summary">
+                    Experienced Full Stack Developer with 8+ years of expertise in building scalable web applications using modern technologies. Proven track record of leading development teams, implementing CI/CD pipelines, and delivering high-quality software solutions. Passionate about clean code, performance optimization, and mentoring junior developers.
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section class="resume-section" id="experience-section">
+            <h2 class="section-title">Work Experience</h2>
+            <div class="section-content" id="resume-experience">
+                <div class="experience-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title experience-position">Senior Full Stack Developer</div>
+                            <div class="item-subtitle experience-company">TechCorp Solutions</div>
+                            <div class="item-location experience-location">San Francisco, CA</div>
+                        </div>
+                        <div class="item-dates experience-dates">Jan 2021 - Present</div>
+                    </div>
+                    <div class="item-description experience-description">
+                        <ul>
+                            <li>Led a team of 5 developers in building a microservices-based e-commerce platform serving 100K+ users</li>
+                            <li>Implemented CI/CD pipelines using Docker and Kubernetes, reducing deployment time by 70%</li>
+                            <li>Architected RESTful APIs using Django REST Framework and PostgreSQL, improving response times by 40%</li>
+                            <li>Mentored 3 junior developers and conducted technical interviews for new hires</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="experience-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title experience-position">Full Stack Developer</div>
+                            <div class="item-subtitle experience-company">StartupXYZ</div>
+                            <div class="item-location experience-location">Remote</div>
+                        </div>
+                        <div class="item-dates experience-dates">Jun 2018 - Dec 2020</div>
+                    </div>
+                    <div class="item-description experience-description">
+                        <ul>
+                            <li>Developed and maintained React-based web applications with Redux state management</li>
+                            <li>Built responsive mobile applications using React Native for iOS and Android platforms</li>
+                            <li>Integrated third-party APIs and payment gateways (Stripe, PayPal) for seamless user experience</li>
+                            <li>Optimized database queries and implemented caching strategies, improving page load times by 50%</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="experience-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title experience-position">Junior Web Developer</div>
+                            <div class="item-subtitle experience-company">Digital Agency Pro</div>
+                            <div class="item-location experience-location">Los Angeles, CA</div>
+                        </div>
+                        <div class="item-dates experience-dates">Aug 2016 - May 2018</div>
+                    </div>
+                    <div class="item-description experience-description">
+                        <ul>
+                            <li>Developed custom WordPress themes and plugins for small to medium-sized businesses</li>
+                            <li>Collaborated with designers to convert PSD mockups to responsive HTML/CSS/JavaScript</li>
+                            <li>Implemented SEO best practices and Google Analytics tracking for client websites</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section class="resume-section" id="education-section">
+            <h2 class="section-title">Education</h2>
+            <div class="section-content" id="resume-education">
+                <div class="education-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title education-degree">Bachelor of Science in Computer Science</div>
+                            <div class="item-subtitle education-school">University of California, Berkeley</div>
+                            <div class="education-field">Specialization: Software Engineering</div>
+                            <div class="education-gpa">GPA: 3.8/4.0</div>
+                        </div>
+                        <div class="item-dates education-dates">Sep 2012 - May 2016</div>
+                    </div>
+                    <div class="item-description education-description">
+                        Relevant Coursework: Data Structures & Algorithms, Database Systems, Software Engineering, Computer Networks, Machine Learning
+                    </div>
+                </div>
+
+                    <div class="education-item">
+                        <div class="item-header">
+                            <div>
+                                <div class="item-title education-degree">Full Stack Web Development Bootcamp</div>
+                                <div class="item-subtitle education-school">General Assembly</div>
+                                <div class="education-field">Intensive 12-week program</div>
+                            </div>
+                            <div class="item-dates education-dates">Jan 2016 - Apr 2016</div>
+                        </div>
+                        <div class="item-description education-description">
+                            Completed intensive training in HTML5, CSS3, JavaScript, Node.js, Express.js, MongoDB, and React.js
+                        </div>
+                    </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section class="resume-section" id="projects-section">
+            <h2 class="section-title">Projects</h2>
+            <div class="section-content" id="resume-projects">
+                <div class="project-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title project-name">E-Commerce Analytics Dashboard</div>
+                        </div>
+                        <div class="item-dates project-dates">Mar 2023 - Jun 2023</div>
+                    </div>
+                    <div class="item-description project-description">
+                        Built a real-time analytics dashboard for e-commerce businesses to track sales, customer behavior, and inventory. Features include interactive charts, automated reports, and predictive analytics using machine learning.
+                    </div>
+                    <div class="project-technologies">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">Django</span>
+                        <span class="tech-tag">PostgreSQL</span>
+                        <span class="tech-tag">Redis</span>
+                        <span class="tech-tag">Chart.js</span>
+                        <span class="tech-tag">AWS</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://demo.ecommerce-analytics.com" class="project-link project-url" target="_blank">Live Demo</a>
+                        <a href="https://github.com/alexjohnson/ecommerce-analytics" class="project-link project-github" target="_blank">GitHub</a>
+                    </div>
+                </div>
+
+                <div class="project-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title project-name">Task Management Mobile App</div>
+                        </div>
+                        <div class="item-dates project-dates">Oct 2022 - Feb 2023</div>
+                    </div>
+                    <div class="item-description project-description">
+                        Developed a cross-platform mobile application for team task management with real-time collaboration, file sharing, and progress tracking. Supports offline functionality and push notifications.
+                    </div>
+                    <div class="project-technologies">
+                        <span class="tech-tag">React Native</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">MongoDB</span>
+                        <span class="tech-tag">Socket.io</span>
+                        <span class="tech-tag">Firebase</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/alexjohnson/task-manager-app" class="project-link project-github" target="_blank">GitHub</a>
+                    </div>
+                </div>
+
+                <div class="project-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title project-name">AI-Powered Recipe Recommender</div>
+                        </div>
+                        <div class="item-dates project-dates">Jun 2022 - Sep 2022</div>
+                    </div>
+                    <div class="item-description project-description">
+                        Created a web application that recommends recipes based on available ingredients using machine learning algorithms. Features dietary restriction filters and nutritional information.
+                    </div>
+                    <div class="project-technologies">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Flask</span>
+                        <span class="tech-tag">TensorFlow</span>
+                        <span class="tech-tag">MySQL</span>
+                        <span class="tech-tag">Bootstrap</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://recipe-ai.herokuapp.com" class="project-link project-url" target="_blank">Live Demo</a>
+                        <a href="https://github.com/alexjohnson/recipe-recommender" class="project-link project-github" target="_blank">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section class="resume-section" id="skills-section">
+            <h2 class="section-title">Technical Skills</h2>
+            <div class="section-content" id="resume-skills">
+                <div class="skills-container">
+                    <div class="skill-category">
+                        <span class="skill-category-title">Programming Languages:</span>
+                        <div class="skills-list">
+                            <span class="skill-item">
+                                <span class="skill-name">JavaScript</span>
+                            </span>
+                            <span class="skill-item">
+                                <span class="skill-name">Python</span>
+                            </span>
+                            <span class="skill-item">
+                                <span class="skill-name">TypeScript</span>
+                            </span>
+                            <span class="skill-item">
+                                <span class="skill-name">Java</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="skill-category">
+                        <span class="skill-category-title">Frontend Technologies:</span>
+                        <div class="skills-list">
+                            <span class="skill-item">
+                                <span class="skill-name">React</span>
+                            </span>
+                            <span class="skill-item">
+                                <span class="skill-name">Vue.js</span>
+                            </span>
+                            <span class="skill-item">
+                                <span class="skill-name">HTML5/CSS3</span>
+                            </span>
+                            <span class="skill-item">
+                                <span class="skill-name">Sass/SCSS</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="skill-category">
+                        <span class="skill-category-title">Backend Technologies:</span>
+                        <div class="skills-list">
+                            <span class="skill-item">
+                                <span class="skill-name">Django</span>
+                            </span>
+                            <span class="skill-item">
+                                <span class="skill-name">Node.js</span>
+                            </span>
+                            <span class="skill-item">
+                                <span class="skill-name">Express.js</span>
+                            </span>
+                            <span class="skill-item">
+                                <span class="skill-name">FastAPI</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="skill-category">
+                        <span class="skill-category-title">Databases & Tools:</span>
+                        <div class="skills-list">
+                            <span class="skill-item">
+                                <span class="skill-name">PostgreSQL</span>
+                            </span>
+                            <span class="skill-item">
+                                <span class="skill-name">MongoDB</span>
+                            </span>
+                            <span class="skill-item">
+                                <span class="skill-name">Redis</span>
+                            </span>
+                            <span class="skill-item">
+                                <span class="skill-name">Docker</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Certifications Section -->
+        <section class="resume-section" id="certifications-section">
+            <h2 class="section-title">Certifications</h2>
+            <div class="section-content" id="resume-certifications">
+                <div class="certification-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title certification-name">AWS Certified Solutions Architect - Associate</div>
+                            <div class="item-subtitle certification-organization">Amazon Web Services</div>
+                        </div>
+                        <div class="item-dates certification-dates">Mar 2023</div>
+                    </div>
+                    <div class="certification-details">
+                        <div class="credential-info">
+                            <span class="certification-credential-id">Credential ID: AWS-ASA-12345</span>
+                            <a href="https://aws.amazon.com/verification" class="contact-link certification-url" target="_blank">View Credential</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="certification-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title certification-name">Google Cloud Professional Developer</div>
+                            <div class="item-subtitle certification-organization">Google Cloud</div>
+                        </div>
+                        <div class="item-dates certification-dates">Nov 2022</div>
+                    </div>
+                    <div class="certification-details">
+                        <div class="credential-info">
+                            <span class="certification-credential-id">Credential ID: GCP-PD-67890</span>
+                            <a href="https://cloud.google.com/certification/verification" class="contact-link certification-url" target="_blank">View Credential</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="certification-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title certification-name">Certified Kubernetes Administrator (CKA)</div>
+                            <div class="item-subtitle certification-organization">Cloud Native Computing Foundation</div>
+                        </div>
+                        <div class="item-dates certification-dates">Aug 2022</div>
+                    </div>
+                    <div class="certification-details">
+                        <div class="credential-info">
+                            <span class="certification-credential-id">Credential ID: CKA-54321</span>
+                            <a href="https://www.cncf.io/certification/verify" class="contact-link certification-url" target="_blank">View Credential</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Achievements Section -->
+        <section class="resume-section" id="achievements-section">
+            <h2 class="section-title">Achievements & Awards</h2>
+            <div class="section-content" id="resume-achievements">
+                <div class="achievement-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title achievement-title">Employee of the Year</div>
+                            <div class="item-subtitle achievement-organization">TechCorp Solutions</div>
+                        </div>
+                        <div class="item-dates achievement-date">Dec 2022</div>
+                    </div>
+                    <div class="item-description achievement-description">
+                        Recognized for outstanding performance in leading the development of a critical microservices platform that increased system scalability by 300% and reduced operational costs by $500K annually.
+                    </div>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title achievement-title">Best Innovation Award</div>
+                            <div class="item-subtitle achievement-organization">StartupXYZ</div>
+                        </div>
+                        <div class="item-dates achievement-date">Sep 2020</div>
+                    </div>
+                    <div class="item-description achievement-description">
+                        Awarded for developing an AI-powered feature that improved user engagement by 85% and contributed to a successful Series B funding round of $25M.
+                    </div>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title achievement-title">Open Source Contributor Recognition</div>
+                            <div class="item-subtitle achievement-organization">GitHub</div>
+                        </div>
+                        <div class="item-dates achievement-date">Oct 2021</div>
+                    </div>
+                    <div class="item-description achievement-description">
+                        Recognized as a top contributor to React ecosystem with 500+ stars on personal projects and significant contributions to popular open-source libraries.
+                    </div>
+                </div>
+
+                <div class="achievement-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title achievement-title">Hackathon Winner - 1st Place</div>
+                            <div class="item-subtitle achievement-organization">TechCrunch Disrupt</div>
+                        </div>
+                        <div class="item-dates achievement-date">Jun 2019</div>
+                    </div>
+                    <div class="item-description achievement-description">
+                        Led a team of 4 developers to build a blockchain-based supply chain tracking solution in 48 hours, winning first place among 200+ teams and securing a $50K prize.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Hidden templates for JavaScript to clone -->
+    <div style="display: none;">
+        <!-- Experience Item Template -->
+        <div class="experience-item-template">
+            <div class="experience-item">
+                <div class="item-header">
+                    <div>
+                        <div class="item-title experience-position"></div>
+                        <div class="item-subtitle experience-company"></div>
+                        <div class="item-location experience-location"></div>
+                    </div>
+                    <div class="item-dates experience-dates"></div>
+                </div>
+                <div class="item-description experience-description"></div>
+            </div>
+        </div>
+
+        <!-- Education Item Template -->
+        <div class="education-item-template">
+            <div class="education-item">
+                <div class="item-header">
+                    <div>
+                        <div class="item-title education-degree"></div>
+                        <div class="item-subtitle education-school"></div>
+                        <div class="education-field"></div>
+                        <div class="education-gpa"></div>
+                    </div>
+                    <div class="item-dates education-dates"></div>
+                </div>
+                <div class="item-description education-description"></div>
+            </div>
+        </div>
+
+        <!-- Project Item Template -->
+        <div class="project-item-template">
+            <div class="project-item">
+                <div class="item-header">
+                    <div>
+                        <div class="item-title project-name"></div>
+                    </div>
+                    <div class="item-dates project-dates"></div>
+                </div>
+                <div class="item-description project-description"></div>
+                <div class="project-technologies"></div>
+                <div class="project-links">
+                    <a href="#" class="project-link project-url" target="_blank">Live Demo</a>
+                    <a href="#" class="project-link project-github" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skill Category Template -->
+        <div class="skill-category-template">
+            <div class="skill-category">
+                <div class="skill-category-title"></div>
+                <div class="skills-list"></div>
+            </div>
+        </div>
+
+        <!-- Skill Item Template -->
+        <div class="skill-item-template">
+            <span class="skill-item">
+                <span class="skill-name"></span>
+                <span class="skill-level"></span>
+            </span>
+        </div>
+
+        <!-- Certification Item Template -->
+        <div class="certification-item-template">
+            <div class="certification-item">
+                <div class="item-header">
+                    <div>
+                        <div class="item-title certification-name"></div>
+                        <div class="item-subtitle certification-organization"></div>
+                    </div>
+                    <div class="item-dates certification-dates"></div>
+                </div>
+                <div class="certification-details">
+                    <div class="credential-info">
+                        <span class="certification-credential-id"></span>
+                        <a href="#" class="contact-link certification-url" target="_blank">View Credential</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievement Item Template -->
+        <div class="achievement-item-template">
+            <div class="achievement-item">
+                <div class="item-header">
+                    <div>
+                        <div class="item-title achievement-title"></div>
+                        <div class="item-subtitle achievement-organization"></div>
+                    </div>
+                    <div class="item-dates achievement-date"></div>
+                </div>
+                <div class="item-description achievement-description"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
