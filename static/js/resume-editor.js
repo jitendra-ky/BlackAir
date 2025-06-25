@@ -5,6 +5,7 @@ const appState = {
     resume: null,
     resumeId: null,
     hasUnsavedChanges: false,
+    originalHeader: null, // Store original header state for cancel functionality
     header: {
         name: '',
         title: '',
@@ -49,6 +50,13 @@ function setupEventListeners() {
     // Preview button
     $('#preview-btn').click(previewResume);
     
+    // Cancel all changes button
+    $('#cancel-all-btn').click(function() {
+        if (confirm('Are you sure you want to cancel all unsaved changes? This cannot be undone.')) {
+            location.reload(); // Reload the page to reset all changes
+        }
+    });
+    
     // Resume title input
     $('#resume-title-input').on('input', function() {
         const newTitle = $(this).val();
@@ -59,14 +67,21 @@ function setupEventListeners() {
     
     // Header section event listeners
     $('#edit-header-btn').click(function() {
+        // Save current state for cancel functionality
+        appState.originalHeader = { ...appState.header };
         $('#header-display').hide();
         $('#header-form').show();
     });
     
     $('#cancel-header-btn').click(function() {
-        loadHeaderData(); // Reset form to current state
+        // Restore original header state
+        if (appState.originalHeader) {
+            appState.header = { ...appState.originalHeader };
+            loadHeaderData(); // Reset form to original state
+        }
         $('#header-form').hide();
         $('#header-display').show();
+        updateHeaderDisplay();
     });
     
     $('#save-header-btn').click(function() {
@@ -75,6 +90,8 @@ function setupEventListeners() {
         $('#header-form').hide();
         $('#header-display').show();
         markAsChanged();
+        // Clear backup since changes are now committed
+        appState.originalHeader = null;
     });
     
     // Header form input listeners
@@ -116,6 +133,19 @@ async function initializeEditor() {
 async function loadResumeData() {
     // Load resume basic info
     appState.resume = await apiFetch(`/resumes/${appState.resumeId}/`);
+    
+    // Load header data from resume
+    appState.header = {
+        name: appState.resume.name || '',
+        title: appState.resume.professional_title || '',
+        phone: appState.resume.phone || '',
+        email: appState.resume.email || '',
+        location: appState.resume.location || '',
+        linkedin: appState.resume.linkedin_url || '',
+        github: appState.resume.github_url || '',
+        website: appState.resume.website_url || '',
+        twitter: appState.resume.twitter_url || ''
+    };
     
     // Load all sections in parallel
     const [education, experience, projects, skills, certifications, achievements] = await Promise.all([
@@ -1086,18 +1116,36 @@ async function saveResume() {
     try {
         $('#save-btn').prop('disabled', true).text('Saving...');
         
-        // Save resume title if changed
+        // Prepare resume data including header information
+        const resumeData = {
+            title: appState.resume.title,
+            name: appState.header.name,
+            professional_title: appState.header.title,
+            phone: appState.header.phone,
+            email: appState.header.email,
+            location: appState.header.location,
+            linkedin_url: appState.header.linkedin,
+            github_url: appState.header.github,
+            website_url: appState.header.website,
+            twitter_url: appState.header.twitter
+        };
+        
+        // Save resume with all header data
         await apiFetch(`/resumes/${appState.resumeId}/`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title: appState.resume.title })
+            body: JSON.stringify(resumeData)
         });
         
         showSuccess('Resume saved successfully');
         markAsSaved();
+        
+        // Update the header display to reflect saved changes
+        updateHeaderDisplay();
+        
     } catch (error) {
         console.error('Error saving resume:', error);
-        showError('Failed to save resume');
+        showError('Failed to save resume. Please try again.');
     } finally {
         $('#save-btn').prop('disabled', false).text('💾 Save Changes');
     }
@@ -1128,12 +1176,14 @@ function getFormData($item) {
 
 function markAsChanged() {
     appState.hasUnsavedChanges = true;
-    $('#save-btn').addClass('btn-warning').text('💾 Save Changes*');
+    $('#unsaved-indicator').removeClass('hidden');
+    $('#save-btn').removeClass('opacity-50').addClass('bg-blue-600 hover:bg-blue-700');
 }
 
 function markAsSaved() {
     appState.hasUnsavedChanges = false;
-    $('#save-btn').removeClass('btn-warning').text('💾 Save Changes');
+    $('#unsaved-indicator').addClass('hidden');
+    $('#save-btn').addClass('opacity-50').removeClass('bg-blue-600 hover:bg-blue-700');
 }
 
 function showLoading() {
@@ -1329,8 +1379,8 @@ function updateHeaderDisplay() {
 }
 
 function initializeHeader() {
-    // Initialize header with sample data if empty
-    if (!appState.header.name) {
+    // Use placeholder data only if no data exists
+    if (!appState.header.name && !appState.header.email && !appState.header.phone) {
         appState.header = {
             name: 'Your Name',
             title: 'Professional Title',

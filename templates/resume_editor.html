@@ -10,10 +10,21 @@
     <div class="header-left">
       <a href="/" class="text-sm text-gray-500 hover:text-brand-blue mb-1 block">← Dashboard</a>
       <h1 id="resume-title-display" class="text-2xl font-semibold text-gray-900">Loading...</h1>
+      <div id="unsaved-indicator" class="text-xs text-amber-600 font-medium hidden">
+        <span class="inline-block w-2 h-2 bg-amber-400 rounded-full mr-1"></span>
+        Unsaved changes
+      </div>
     </div>
     <div class="header-actions flex gap-2">
-      <button id="preview-btn" class="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded hover:bg-gray-50">Preview</button>
-      <button id="save-btn" class="px-4 py-2 text-sm bg-brand-blue text-white rounded hover:bg-blue-600">Save</button>
+      <button id="cancel-all-btn" class="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200 hidden">
+        ↺ Cancel Changes
+      </button>
+      <button id="preview-btn" class="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+        👁️ Preview
+      </button>
+      <button id="save-btn" class="px-4 py-2 text-sm bg-brand-blue text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+        💾 Save Changes
+      </button>
     </div>
   </div>
 
