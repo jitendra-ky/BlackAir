@@ -4,34 +4,34 @@
 {% block title %}Dashboard - Resume Builder{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
+<div class="dashboard-container max-w-6xl mx-auto p-4 min-h-screen">
   <!-- Welcome Section -->
-  <div class="dashboard-welcome">
-    <h1>Welcome to Your Resume Dashboard</h1>
-    <p>Create, manage, and customize your professional resumes</p>
+  <div class="dashboard-welcome text-center py-8">
+    <h1 class="text-3xl font-medium mb-2 text-gray-900">Resume Dashboard</h1>
+    <p class="text-gray-600 mb-6">Create and manage your professional resumes</p>
   </div>
 
   <!-- Dashboard Actions -->
-  <div class="dashboard-actions">
-    <h2 class="section-title">My Resumes</h2>
-    <button id="create-resume-btn" class="btn btn-primary">
-      ✨ Create New Resume
+  <div class="dashboard-actions flex justify-between items-center mb-8">
+    <h2 class="section-title text-xl text-gray-900 font-medium">My Resumes</h2>
+    <button id="create-resume-btn" class="btn bg-brand-blue text-white px-4 py-2 rounded hover:bg-blue-600">
+      Create New Resume
     </button>
   </div>
 
   <!-- Resume List Section -->
-  <div id="resume-list" class="resume-grid">
+  <div id="resume-list" class="resume-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <!-- Loading spinner -->
-    <div id="loading-spinner" class="loading-spinner">
-      <div class="spinner"></div>
+    <div id="loading-spinner" class="loading-spinner text-center py-12 col-span-full text-gray-600">
+      <div class="spinner w-8 h-8 border-2 border-gray-300 border-t-brand-blue rounded-full animate-spin mx-auto mb-3"></div>
       <p>Loading your resumes...</p>
     </div>
 
     <!-- Empty state -->
-    <div id="empty-state" class="empty-state" style="display: none;">
-      <h3>No resumes yet</h3>
-      <p>Start building your professional resume by creating your first one. It's quick and easy!</p>
-      <button class="btn btn-primary" onclick="showCreateResumeModal()">
+    <div id="empty-state" class="empty-state text-center py-12 col-span-full text-gray-600 hidden">
+      <h3 class="text-xl font-medium mb-2">No resumes yet</h3>
+      <p class="mb-6 max-w-md mx-auto">Start building your professional resume by creating your first one.</p>
+      <button class="btn bg-brand-blue text-white px-4 py-2 rounded hover:bg-blue-600" onclick="showCreateResumeModal()">
         Create Your First Resume
       </button>
     </div>
@@ -41,22 +41,22 @@
 </div>
 
 <!-- Create Resume Modal -->
-<div id="create-resume-modal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>Create New Resume</h2>
-      <span class="close" id="close-create-modal">&times;</span>
+<div id="create-resume-modal" class="modal fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center hidden">
+  <div class="modal-content mx-auto mt-3 bg-white rounded border w-11/12 max-w-md max-h-[90vh] overflow-y-auto">
+    <div class="modal-header flex justify-between items-center p-4 border-b">
+      <h2 class="text-lg font-medium text-gray-900">Create New Resume</h2>
+      <span class="close text-xl cursor-pointer text-gray-400 hover:text-gray-600 p-1" id="close-create-modal">&times;</span>
     </div>
-    <div class="modal-body">
+    <div class="modal-body p-4">
       <form id="create-resume-form">
-        <div class="form-group">
-          <label for="resume-title">Resume Title</label>
-          <input type="text" id="resume-title" name="title" placeholder="e.g., Software Developer Resume" required>
-          <small>Give your resume a descriptive name to help you identify it later.</small>
+        <div class="form-group mb-4">
+          <label for="resume-title" class="block mb-1 font-medium text-gray-700 text-sm">Resume Title</label>
+          <input type="text" id="resume-title" name="title" placeholder="e.g., Software Developer Resume" required class="w-full px-3 py-2 border rounded text-sm focus:outline-none focus:border-brand-blue">
+          <small class="block mt-1 text-gray-500 text-xs">Give your resume a descriptive name to help you identify it later.</small>
         </div>
-        <div class="form-actions">
-          <button type="button" class="btn btn-outline" onclick="closeCreateResumeModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">Create Resume</button>
+        <div class="form-actions flex gap-3 justify-end mt-6 pt-3 border-t">
+          <button type="button" class="btn border text-gray-600 px-4 py-2 rounded hover:bg-gray-50" onclick="closeCreateResumeModal()">Cancel</button>
+          <button type="submit" class="btn bg-brand-blue text-white px-4 py-2 rounded hover:bg-blue-600">Create Resume</button>
         </div>
       </form>
     </div>
@@ -64,29 +64,25 @@
 </div>
 
 <!-- Resume Actions Modal -->
-<div id="resume-actions-modal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>Resume Actions</h2>
-      <span class="close" id="close-actions-modal">&times;</span>
+<div id="resume-actions-modal" class="modal fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center hidden">
+  <div class="modal-content bg-white rounded border w-11/12 max-w-md max-h-[90vh] overflow-y-auto">
+    <div class="modal-header flex justify-between items-center p-4 border-b">
+      <h2 class="text-lg font-medium text-gray-900">Resume Actions</h2>
+      <span class="close text-xl cursor-pointer text-gray-400 hover:text-gray-600 p-1" id="close-actions-modal">&times;</span>
     </div>
-    <div class="modal-body">
-      <div class="action-buttons">
-        <button class="action-btn" onclick="editResume()">
-          <span class="action-icon">✏️</span>
-          <span class="action-text">Edit Resume</span>
+    <div class="modal-body p-4">
+      <div class="action-buttons grid grid-cols-2 gap-3">
+        <button class="action-btn flex items-center gap-3 p-3 bg-gray-50 border rounded hover:bg-gray-100 cursor-pointer text-left" onclick="editResume()">
+          <span class="action-text text-sm">Edit Resume</span>
         </button>
-        <button class="action-btn" onclick="viewResume()">
-          <span class="action-icon">👁️</span>
-          <span class="action-text">View Resume</span>
+        <button class="action-btn flex items-center gap-3 p-3 bg-gray-50 border rounded hover:bg-gray-100 cursor-pointer text-left" onclick="viewResume()">
+          <span class="action-text text-sm">View Resume</span>
         </button>
-        <button class="action-btn" onclick="duplicateResume()">
-          <span class="action-icon">📋</span>
-          <span class="action-text">Duplicate Resume</span>
+        <button class="action-btn flex items-center gap-3 p-3 bg-gray-50 border rounded hover:bg-gray-100 cursor-pointer text-left" onclick="duplicateResume()">
+          <span class="action-text text-sm">Duplicate Resume</span>
         </button>
-        <button class="action-btn danger" onclick="deleteResume()">
-          <span class="action-icon">🗑️</span>
-          <span class="action-text">Delete Resume</span>
+        <button class="action-btn danger text-red-600 border-red-200 bg-red-50 hover:bg-red-100 flex items-center gap-3 p-3 border rounded cursor-pointer text-left" onclick="deleteResume()">
+          <span class="action-text text-sm">Delete Resume</span>
         </button>
       </div>
     </div>

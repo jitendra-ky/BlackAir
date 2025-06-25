@@ -1,0 +1,17 @@
+{
+    "tailwindCSS.includeLanguages": {
+      "html": "html",
+      "django-html": "html"
+    },
+    "editor.quickSuggestions": {
+      "strings": true
+    },
+    "tailwindCSS.experimental.classRegex": [
+      ["class(?:Name)?=\\\"([^\\\"]*)\\\"", 1],
+      ["class:\\s*'([^']*)'", 1],
+      ["class:\\s*\"([^\"]*)\"", 1],
+      ["class=\\{`([^`]*)`\\}", 1],
+      ["class=\\{\\'([^\\']*)\\'\\}", 1]
+    ]
+  }
+  
