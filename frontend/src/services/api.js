@@ -123,6 +123,13 @@ export const resumeAPI = {
     const response = await api.post(`/resumes/${id}/duplicate/`);
     return response.data;
   },
+
+  downloadPDF: async (id) => {
+    const response = await api.get(`/resumes/${id}/download-pdf/`, {
+      responseType: 'blob', // Important for PDF download
+    });
+    return response;
+  },
 };
 
 // Education endpoints

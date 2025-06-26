@@ -296,7 +296,7 @@ const ResumeEditor = () => {
             {showSidePreview && isLargeScreen && (
               <div className="hidden lg:block bg-gray-100 border-l border-gray-200 min-h-screen">
                 <div className="sticky top-0 h-screen overflow-y-auto">
-                  <div className="p-4 xl:p-6">
+                  <div className="p-1 xl:p-1">
                     <div className="flex justify-between items-center mb-4">
                       <div className="flex items-center gap-2">
                         <h3 className="text-lg font-semibold text-gray-900">
@@ -325,7 +325,7 @@ const ResumeEditor = () => {
                       style={{
                         aspectRatio: "210/297", // A4 aspect ratio
                         maxWidth: "100%",
-                        width: "min(100%, 600px)", // Responsive width with max limit
+                        width: "min(100%, 900px)", // Responsive width with max limit
                       }}
                     >
                       <div className="w-full h-full overflow-hidden">
@@ -337,7 +337,7 @@ const ResumeEditor = () => {
                             height: "133.33%",
                           }}
                         >
-                          <ResumePreview resume={resume} />
+                          <ResumePreview resume={resume} showHeader={true} />
                         </div>
                       </div>
                     </div>
@@ -373,7 +373,7 @@ const ResumeEditor = () => {
               previewUpdateIndicator ? "ring-2 ring-green-200 rounded-lg" : ""
             }`}
           >
-            <ResumePreview resume={resume} />
+            <ResumePreview resume={resume} showHeader={true} />
           </div>
         </div>
       </Modal>

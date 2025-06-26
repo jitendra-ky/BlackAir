@@ -1,6 +1,42 @@
 import React, { useMemo } from "react";
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import Button from "../ui/Button";
+import { resumeAPI } from "../../services/api";
+import toast from "react-hot-toast";
 
-const ResumePreview = ({ resume }) => {
+const ResumePreview = ({ resume, showHeader = false }) => {
+  const handleDownloadPDF = async () => {
+    if (!resume?.id) {
+      toast.error("Resume not found");
+      return;
+    }
+
+    try {
+      const response = await resumeAPI.downloadPDF(resume.id);
+      
+      // Create blob URL and trigger download
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Generate filename from resume title or use default
+      const filename = resume.title 
+        ? `resume_${resume.title.replace(/\s+/g, '_')}_${resume.id}.pdf`
+        : `resume_${resume.id}.pdf`;
+      
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success("PDF downloaded successfully!");
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      toast.error("Failed to download PDF. Please try again.");
+    }
+  };
   // Memoize the preview content to ensure it updates when resume data changes
   const previewContent = useMemo(() => {
     if (!resume) {
@@ -12,10 +48,28 @@ const ResumePreview = ({ resume }) => {
     }
 
     return (
-      <div
-        className="bg-white p-8 shadow-lg"
-        style={{ fontFamily: "Times New Roman, serif" }}
-      >
+      <div className="bg-white">
+        {/* Preview Header with Download Button */}
+        {showHeader && (
+          <div className="flex justify-between items-center p-4 bg-gray-50 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Resume Preview</h3>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={handleDownloadPDF}
+              className="flex items-center gap-2"
+            >
+              <ArrowDownTrayIcon className="h-4 w-4" />
+              Download PDF
+            </Button>
+          </div>
+        )}
+        
+        {/* Resume Content */}
+        <div
+          className="p-8 shadow-lg"
+          style={{ fontFamily: "Times New Roman, serif" }}
+        >
         {/* Header Section */}
         <div className="text-center border-b-2 border-gray-800 pb-4 mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -239,6 +293,7 @@ const ResumePreview = ({ resume }) => {
             </ul>
           </div>
         )}
+        </div>
       </div>
     );
   }, [resume]); // Dependency on resume to trigger re-render when data changes

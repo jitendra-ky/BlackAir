@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (
     ResumeViewSet, EducationViewSet, ExperienceViewSet, 
-    ProjectViewSet, SkillViewSet, CertificationViewSet, AchievementViewSet
+    ProjectViewSet, SkillViewSet, CertificationViewSet, AchievementViewSet,
+    ResumePDFDownloadView
 )
 from django.urls import include
 from rest_framework.routers import DefaultRouter
@@ -18,4 +19,5 @@ router.register(r'achievements', AchievementViewSet, basename='achievement')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('resumes/<int:resume_id>/download-pdf/', ResumePDFDownloadView.as_view(), name='download_resume_pdf'),
 ]
