@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useResume } from "../../hooks/useResume";
 import LoadingSpinner from "../ui/LoadingSpinner";
@@ -14,12 +14,36 @@ import ResumeCertificationsSection from "./ResumeCertificationsSection";
 import ResumeAchievementsSection from "./ResumeAchievementsSection";
 import ResumePreview from "./ResumePreview";
 
+/**
+ * ResumeEditor Component
+ *
+ * This component provides a resume editing interface with live preview functionality.
+ * Key features:
+ *
+ * 1. Real-time Preview Updates:
+ *    - When any section is saved, the preview updates immediately
+ *    - Enhanced save functions wrap original save methods with visual indicators
+ *    - Preview shows a green "Updated" indicator and subtle ring animation when changes are saved
+ *
+ * 2. Responsive Preview:
+ *    - Side panel preview for large screens (lg and above)
+ *    - Modal preview for smaller screens
+ *    - Automatically hides side preview on smaller screens
+ *
+ * 3. Visual Feedback:
+ *    - Update indicator appears for 500ms after each save
+ *    - Smooth transitions and animations
+ *    - Clear visual distinction between preview and editor
+ */
+
 const ResumeEditor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showSidePreview, setShowSidePreview] = useState(true);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
+  const [previewUpdateIndicator, setPreviewUpdateIndicator] = useState(false);
+  const previewRef = useRef(null);
 
   // Handle responsive behavior
   useEffect(() => {
@@ -62,6 +86,56 @@ const ResumeEditor = () => {
   const handleResumeUpdate = (field, value) => {
     updateResumeData({ [field]: value });
   };
+
+  // Enhanced save functions with preview update indication
+  const createEnhancedSaveFunction = (originalSaveFunction, sectionName) => {
+    return async (...args) => {
+      try {
+        setPreviewUpdateIndicator(true);
+        const result = await originalSaveFunction(...args);
+
+        // Brief visual indication that preview updated
+        setTimeout(() => {
+          setPreviewUpdateIndicator(false);
+        }, 500);
+
+        return result;
+      } catch (error) {
+        setPreviewUpdateIndicator(false);
+        throw error;
+      }
+    };
+  };
+
+  // Create enhanced save functions
+  const enhancedSaveResumeHeader = createEnhancedSaveFunction(
+    saveResumeHeader,
+    "Header"
+  );
+  const enhancedSaveEducationSection = createEnhancedSaveFunction(
+    saveEducationSection,
+    "Education"
+  );
+  const enhancedSaveExperienceSection = createEnhancedSaveFunction(
+    saveExperienceSection,
+    "Experience"
+  );
+  const enhancedSaveSkillsSection = createEnhancedSaveFunction(
+    saveSkillsSection,
+    "Skills"
+  );
+  const enhancedSaveProjectsSection = createEnhancedSaveFunction(
+    saveProjectsSection,
+    "Projects"
+  );
+  const enhancedSaveCertificationsSection = createEnhancedSaveFunction(
+    saveCertificationsSection,
+    "Certifications"
+  );
+  const enhancedSaveAchievementsSection = createEnhancedSaveFunction(
+    saveAchievementsSection,
+    "Achievements"
+  );
 
   if (loading) {
     return (
@@ -155,7 +229,7 @@ const ResumeEditor = () => {
                   <ResumeHeaderSection
                     resume={resume}
                     onUpdate={handleResumeUpdate}
-                    onSave={saveResumeHeader}
+                    onSave={enhancedSaveResumeHeader}
                   />
 
                   {/* Education Section */}
@@ -164,7 +238,7 @@ const ResumeEditor = () => {
                     onUpdate={(updatedEducation) =>
                       handleResumeUpdate("education", updatedEducation)
                     }
-                    onSave={saveEducationSection}
+                    onSave={enhancedSaveEducationSection}
                   />
 
                   {/* Experience Section */}
@@ -173,7 +247,7 @@ const ResumeEditor = () => {
                     onUpdate={(updatedExperience) =>
                       handleResumeUpdate("experience", updatedExperience)
                     }
-                    onSave={saveExperienceSection}
+                    onSave={enhancedSaveExperienceSection}
                   />
 
                   {/* Projects Section */}
@@ -182,7 +256,7 @@ const ResumeEditor = () => {
                     onUpdate={(updatedProjects) =>
                       handleResumeUpdate("projects", updatedProjects)
                     }
-                    onSave={saveProjectsSection}
+                    onSave={enhancedSaveProjectsSection}
                   />
 
                   {/* Skills Section */}
@@ -191,7 +265,7 @@ const ResumeEditor = () => {
                     onUpdate={(updatedSkills) =>
                       handleResumeUpdate("skills", updatedSkills)
                     }
-                    onSave={saveSkillsSection}
+                    onSave={enhancedSaveSkillsSection}
                   />
 
                   {/* Certifications Section */}
@@ -203,7 +277,7 @@ const ResumeEditor = () => {
                         updatedCertifications
                       )
                     }
-                    onSave={saveCertificationsSection}
+                    onSave={enhancedSaveCertificationsSection}
                   />
 
                   {/* Achievements Section */}
@@ -212,7 +286,7 @@ const ResumeEditor = () => {
                     onUpdate={(updatedAchievements) =>
                       handleResumeUpdate("achievements", updatedAchievements)
                     }
-                    onSave={saveAchievementsSection}
+                    onSave={enhancedSaveAchievementsSection}
                   />
                 </div>
               </div>
@@ -224,9 +298,17 @@ const ResumeEditor = () => {
                 <div className="sticky top-0 h-screen overflow-y-auto">
                   <div className="p-4 xl:p-6">
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        Live Preview
-                      </h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Live Preview
+                        </h3>
+                        {previewUpdateIndicator && (
+                          <div className="flex items-center gap-1 text-sm text-green-600">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span>Updated</span>
+                          </div>
+                        )}
+                      </div>
                       <button
                         onClick={() => setShowSidePreview(false)}
                         className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-200 rounded transition-colors"
@@ -236,7 +318,10 @@ const ResumeEditor = () => {
                     </div>
                     {/* Preview content scaled to fit the available space */}
                     <div
-                      className="bg-white shadow-lg mx-auto rounded-lg overflow-hidden"
+                      ref={previewRef}
+                      className={`bg-white shadow-lg mx-auto rounded-lg overflow-hidden transition-all duration-300 ${
+                        previewUpdateIndicator ? "ring-2 ring-green-200" : ""
+                      }`}
                       style={{
                         aspectRatio: "210/297", // A4 aspect ratio
                         maxWidth: "100%",
@@ -268,12 +353,28 @@ const ResumeEditor = () => {
       <Modal
         isOpen={showPreviewModal}
         onClose={() => setShowPreviewModal(false)}
-        title="Resume Preview"
+        title={
+          <div className="flex items-center gap-2">
+            <span>Resume Preview</span>
+            {previewUpdateIndicator && (
+              <div className="flex items-center gap-1 text-sm text-green-600">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span>Updated</span>
+              </div>
+            )}
+          </div>
+        }
         size="full"
         className="h-full"
       >
         <div className="overflow-y-auto max-h-[80vh]">
-          <ResumePreview resume={resume} />
+          <div
+            className={`transition-all duration-300 ${
+              previewUpdateIndicator ? "ring-2 ring-green-200 rounded-lg" : ""
+            }`}
+          >
+            <ResumePreview resume={resume} />
+          </div>
         </div>
       </Modal>
     </>
