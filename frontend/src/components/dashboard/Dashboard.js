@@ -58,7 +58,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-5xl m-auto space-y-8">
       {/* Header */}
       <div className="text-center py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Resume Dashboard</h1>
