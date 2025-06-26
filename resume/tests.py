@@ -1,4 +1,3 @@
-
 from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework.test import APITestCase
@@ -567,3 +566,66 @@ class AchievementViewSetTest(APITestCase):
         
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Achievement.objects.filter(pk=self.achievement.pk).exists())
+
+
+class ResumePDFDownloadViewTest(APITestCase):
+    """Minimal test suite for ResumePDFDownloadView"""
+    
+    def setUp(self):
+        # Create test users
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.other_user = User.objects.create_user(username='otheruser', password='testpass')
+        
+        # Create test resumes
+        self.resume = Resume.objects.create(
+            title='Test Resume',
+            name='Test User',
+            professional_title='Software Engineer',
+            email='test@example.com',
+            user=self.user
+        )
+        self.other_resume = Resume.objects.create(
+            title='Other Resume',
+            name='Other User', 
+            user=self.other_user
+        )
+        
+        # URL for PDF download
+        self.pdf_url = reverse('download_resume_pdf', kwargs={'resume_id': self.resume.id})
+        self.other_pdf_url = reverse('download_resume_pdf', kwargs={'resume_id': self.other_resume.id})
+        self.invalid_pdf_url = reverse('download_resume_pdf', kwargs={'resume_id': 99999})
+    
+    def authenticate(self, user=None):
+        """Helper method to authenticate user"""
+        if user is None:
+            user = self.user
+        token = RefreshToken.for_user(user).access_token
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+    
+    def test_authenticated_download_success(self):
+        """Test authenticated user can download their PDF"""
+        self.authenticate()
+        response = self.client.get(self.pdf_url)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response['Content-Type'], 'application/pdf')
+        self.assertIn('Content-Disposition', response)
+        self.assertIn('attachment', response['Content-Disposition'])
+        self.assertGreater(len(response.content), 0)  # PDF has content
+    
+    def test_unauthenticated_access_denied(self):
+        """Test unauthenticated access returns 401"""
+        response = self.client.get(self.pdf_url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    
+    def test_cannot_access_other_users_resume(self):
+        """Test user cannot access another user's resume"""
+        self.authenticate()
+        response = self.client.get(self.other_pdf_url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    
+    def test_nonexistent_resume_404(self):
+        """Test invalid resume ID returns 404"""
+        self.authenticate()
+        response = self.client.get(self.invalid_pdf_url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
