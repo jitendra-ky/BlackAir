@@ -3,10 +3,11 @@ import { PlusIcon, TrashIcon, ChevronDownIcon, ChevronRightIcon } from '@heroico
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 
-const ResumeSkillsSection = ({ skills = [], onUpdate }) => {
+const ResumeSkillsSection = ({ skills = [], onUpdate, onSave }) => {
   const [editingItem, setEditingItem] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleAdd = () => {
     setIsAdding(true);
@@ -22,25 +23,37 @@ const ResumeSkillsSection = ({ skills = [], onUpdate }) => {
     setEditingItem({ ...item });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!editingItem) return;
 
-    let updatedSkills;
-    if (editingItem.id === 'new') {
-      // Add new item
-      const newItem = { ...editingItem };
-      delete newItem.id; // Remove temporary ID before sending to backend
-      updatedSkills = [...skills, newItem];
-    } else {
-      // Update existing item
-      updatedSkills = skills.map(item => 
-        item.id === editingItem.id ? editingItem : item
-      );
-    }
+    setIsSaving(true);
+    try {
+      let updatedSkills;
+      if (editingItem.id === 'new') {
+        // Add new item
+        const newItem = { ...editingItem };
+        delete newItem.id; // Remove temporary ID before sending to backend
+        updatedSkills = [...skills, newItem];
+      } else {
+        // Update existing item
+        updatedSkills = skills.map(item => 
+          item.id === editingItem.id ? editingItem : item
+        );
+      }
 
-    onUpdate(updatedSkills);
-    setEditingItem(null);
-    setIsAdding(false);
+      // Update local state first for immediate UI feedback
+      onUpdate(updatedSkills);
+      
+      // Save to backend
+      await onSave(updatedSkills);
+      
+      setEditingItem(null);
+      setIsAdding(false);
+    } catch (error) {
+      console.error('Failed to save skills:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -112,6 +125,7 @@ const ResumeSkillsSection = ({ skills = [], onUpdate }) => {
             item={item}
             isEditing={editingItem?.id === item.id}
             editingItem={editingItem}
+            isSaving={isSaving}
             onEdit={() => handleEdit(item)}
             onDelete={() => handleDelete(item)}
             onSave={handleSave}
@@ -127,6 +141,7 @@ const ResumeSkillsSection = ({ skills = [], onUpdate }) => {
             isEditing={true}
             editingItem={editingItem}
             isNew={true}
+            isSaving={isSaving}
             onSave={handleSave}
             onCancel={handleCancel}
             onInputChange={handleInputChange}
@@ -144,6 +159,7 @@ const SkillItem = ({
   isEditing, 
   editingItem, 
   isNew = false,
+  isSaving = false,
   onEdit, 
   onDelete, 
   onSave, 
@@ -198,10 +214,20 @@ const SkillItem = ({
               </select>
             </div>
             <div className="flex items-center justify-end gap-3 pt-4">
-              <Button variant="outline" size="sm" onClick={onCancel}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onCancel}
+                disabled={isSaving}
+              >
                 Cancel
               </Button>
-              <Button size="sm" onClick={onSave}>
+              <Button 
+                size="sm" 
+                onClick={onSave}
+                loading={isSaving}
+                disabled={isSaving}
+              >
                 Save Skill
               </Button>
             </div>

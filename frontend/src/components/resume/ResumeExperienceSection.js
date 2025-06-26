@@ -3,10 +3,11 @@ import { PlusIcon, TrashIcon, ChevronDownIcon, ChevronRightIcon } from '@heroico
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 
-const ResumeExperienceSection = ({ experience = [], onUpdate }) => {
+const ResumeExperienceSection = ({ experience = [], onUpdate, onSave }) => {
   const [editingItem, setEditingItem] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleAdd = () => {
     setIsAdding(true);
@@ -26,25 +27,37 @@ const ResumeExperienceSection = ({ experience = [], onUpdate }) => {
     setEditingItem({ ...item });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!editingItem) return;
 
-    let updatedExperience;
-    if (editingItem.id === 'new') {
-      // Add new item
-      const newItem = { ...editingItem };
-      delete newItem.id; // Remove temporary ID before sending to backend
-      updatedExperience = [...experience, newItem];
-    } else {
-      // Update existing item
-      updatedExperience = experience.map(item => 
-        item.id === editingItem.id ? editingItem : item
-      );
-    }
+    setIsSaving(true);
+    try {
+      let updatedExperience;
+      if (editingItem.id === 'new') {
+        // Add new item
+        const newItem = { ...editingItem };
+        delete newItem.id; // Remove temporary ID before sending to backend
+        updatedExperience = [...experience, newItem];
+      } else {
+        // Update existing item
+        updatedExperience = experience.map(item => 
+          item.id === editingItem.id ? editingItem : item
+        );
+      }
 
-    onUpdate(updatedExperience);
-    setEditingItem(null);
-    setIsAdding(false);
+      // Update local state first for immediate UI feedback
+      onUpdate(updatedExperience);
+      
+      // Save to backend
+      await onSave(updatedExperience);
+      
+      setEditingItem(null);
+      setIsAdding(false);
+    } catch (error) {
+      console.error('Failed to save experience:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -115,6 +128,7 @@ const ResumeExperienceSection = ({ experience = [], onUpdate }) => {
             item={item}
             isEditing={editingItem?.id === item.id}
             editingItem={editingItem}
+            isSaving={isSaving}
             onEdit={() => handleEdit(item)}
             onDelete={() => handleDelete(item)}
             onSave={handleSave}
@@ -129,6 +143,7 @@ const ResumeExperienceSection = ({ experience = [], onUpdate }) => {
             isEditing={true}
             editingItem={editingItem}
             isNew={true}
+            isSaving={isSaving}
             onSave={handleSave}
             onCancel={handleCancel}
             onInputChange={handleInputChange}
@@ -145,6 +160,7 @@ const ExperienceItem = ({
   isEditing, 
   editingItem, 
   isNew = false,
+  isSaving = false,
   onEdit, 
   onDelete, 
   onSave, 
@@ -231,10 +247,20 @@ const ExperienceItem = ({
               />
             </div>
             <div className="flex items-center justify-end gap-3 pt-4">
-              <Button variant="outline" size="sm" onClick={onCancel}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onCancel}
+                disabled={isSaving}
+              >
                 Cancel
               </Button>
-              <Button size="sm" onClick={onSave}>
+              <Button 
+                size="sm" 
+                onClick={onSave}
+                loading={isSaving}
+                disabled={isSaving}
+              >
                 Save Experience
               </Button>
             </div>

@@ -3,8 +3,9 @@ import { PencilIcon } from '@heroicons/react/24/outline';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 
-const ResumeHeaderSection = ({ resume, onUpdate }) => {
+const ResumeHeaderSection = ({ resume, onUpdate, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: resume?.name || '',
     title: resume?.title || '',
@@ -31,13 +32,24 @@ const ResumeHeaderSection = ({ resume, onUpdate }) => {
     setOriginalData(null);
   };
 
-  const handleSave = () => {
-    // Update the resume with all form data
-    Object.keys(formData).forEach(key => {
-      onUpdate(key, formData[key]);
-    });
-    setIsEditing(false);
-    setOriginalData(null);
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      // Update local state first for immediate UI feedback
+      Object.keys(formData).forEach(key => {
+        onUpdate(key, formData[key]);
+      });
+      
+      // Save to backend
+      await onSave(formData);
+      
+      setIsEditing(false);
+      setOriginalData(null);
+    } catch (error) {
+      console.error('Failed to save header:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleChange = (field, value) => {
@@ -254,11 +266,14 @@ const ResumeHeaderSection = ({ resume, onUpdate }) => {
               <Button
                 variant="outline"
                 onClick={handleCancel}
+                disabled={isSaving}
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleSave}
+                loading={isSaving}
+                disabled={isSaving}
                 className="flex items-center gap-2"
               >
                 💾 Save Header

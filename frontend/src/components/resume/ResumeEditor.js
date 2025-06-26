@@ -5,9 +5,7 @@ import LoadingSpinner from '../ui/LoadingSpinner';
 import Button from '../ui/Button';
 import { 
   ArrowLeftIcon, 
-  EyeIcon, 
-  ArrowPathIcon,
-  BookmarkIcon 
+  EyeIcon
 } from '@heroicons/react/24/outline';
 import ResumeHeaderSection from './ResumeHeaderSection';
 import ResumeEducationSection from './ResumeEducationSection';
@@ -20,30 +18,22 @@ import ResumeAchievementsSection from './ResumeAchievementsSection';
 const ResumeEditor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { resume, loading, hasUnsavedChanges, updateResume, updateResumeData, resetChanges } = useResume(id);
-  const [isSaving, setIsSaving] = useState(false);
-
-  const handleSave = async () => {
-    if (!resume) return;
-    
-    setIsSaving(true);
-    try {
-      await updateResume(resume);
-    } catch (error) {
-      console.error('Failed to save resume:', error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  const { 
+    resume, 
+    loading, 
+    saveResumeHeader,
+    saveEducationSection,
+    saveExperienceSection,
+    saveSkillsSection,
+    saveProjectsSection,
+    saveCertificationsSection,
+    saveAchievementsSection,
+    updateResumeData, 
+    resetChanges 
+  } = useResume(id);
 
   const handlePreview = () => {
     navigate(`/resume/${id}/preview`);
-  };
-
-  const handleCancelChanges = () => {
-    if (window.confirm('Are you sure you want to cancel all unsaved changes? This cannot be undone.')) {
-      resetChanges();
-    }
   };
 
   const handleResumeUpdate = (field, value) => {
@@ -96,28 +86,9 @@ const ResumeEditor = () => {
               placeholder="Resume Title"
             />
           </div>
-          
-          {hasUnsavedChanges && (
-            <div className="flex items-center text-xs text-amber-600 font-medium mt-1">
-              <span className="inline-block w-2 h-2 bg-amber-400 rounded-full mr-2"></span>
-              Unsaved changes
-            </div>
-          )}
         </div>
 
         <div className="flex items-center gap-2">
-          {hasUnsavedChanges && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCancelChanges}
-              className="flex items-center gap-2"
-            >
-              <ArrowPathIcon className="h-4 w-4" />
-              Cancel Changes
-            </Button>
-          )}
-          
           <Button
             variant="outline"
             size="sm"
@@ -126,17 +97,6 @@ const ResumeEditor = () => {
           >
             <EyeIcon className="h-4 w-4" />
             Preview
-          </Button>
-          
-          <Button
-            size="sm"
-            onClick={handleSave}
-            loading={isSaving}
-            disabled={isSaving || !hasUnsavedChanges}
-            className="flex items-center gap-2"
-          >
-            <BookmarkIcon className="h-4 w-4" />
-            Save Changes
           </Button>
         </div>
       </div>
@@ -147,42 +107,49 @@ const ResumeEditor = () => {
         <ResumeHeaderSection
           resume={resume}
           onUpdate={handleResumeUpdate}
+          onSave={saveResumeHeader}
         />
 
         {/* Education Section */}
         <ResumeEducationSection
           education={resume?.education || []}
           onUpdate={(updatedEducation) => handleResumeUpdate('education', updatedEducation)}
+          onSave={saveEducationSection}
         />
 
         {/* Experience Section */}
         <ResumeExperienceSection
           experience={resume?.experience || []}
           onUpdate={(updatedExperience) => handleResumeUpdate('experience', updatedExperience)}
+          onSave={saveExperienceSection}
         />
 
         {/* Projects Section */}
         <ResumeProjectsSection
           projects={resume?.projects || []}
           onUpdate={(updatedProjects) => handleResumeUpdate('projects', updatedProjects)}
+          onSave={saveProjectsSection}
         />
 
         {/* Skills Section */}
         <ResumeSkillsSection
           skills={resume?.skills || []}
           onUpdate={(updatedSkills) => handleResumeUpdate('skills', updatedSkills)}
+          onSave={saveSkillsSection}
         />
 
         {/* Certifications Section */}
         <ResumeCertificationsSection
           certifications={resume?.certifications || []}
           onUpdate={(updatedCertifications) => handleResumeUpdate('certifications', updatedCertifications)}
+          onSave={saveCertificationsSection}
         />
 
         {/* Achievements Section */}
         <ResumeAchievementsSection
           achievements={resume?.achievements || []}
           onUpdate={(updatedAchievements) => handleResumeUpdate('achievements', updatedAchievements)}
+          onSave={saveAchievementsSection}
         />
       </div>
     </div>

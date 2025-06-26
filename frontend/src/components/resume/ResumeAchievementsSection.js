@@ -3,10 +3,11 @@ import { PlusIcon, TrashIcon, ChevronDownIcon, ChevronRightIcon } from '@heroico
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 
-const ResumeAchievementsSection = ({ achievements = [], onUpdate }) => {
+const ResumeAchievementsSection = ({ achievements = [], onUpdate, onSave }) => {
   const [editingItem, setEditingItem] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleAdd = () => {
     setIsAdding(true);
@@ -14,7 +15,7 @@ const ResumeAchievementsSection = ({ achievements = [], onUpdate }) => {
       id: 'new',
       title: '',
       description: '',
-      date: '',
+      date_achieved: '',
       organization: ''
     });
   };
@@ -23,25 +24,64 @@ const ResumeAchievementsSection = ({ achievements = [], onUpdate }) => {
     setEditingItem({ ...item });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!editingItem) return;
 
-    let updatedAchievements;
-    if (editingItem.id === 'new') {
-      // Add new item
-      const newItem = { ...editingItem };
-      delete newItem.id; // Remove temporary ID before sending to backend
-      updatedAchievements = [...achievements, newItem];
-    } else {
-      // Update existing item
-      updatedAchievements = achievements.map(item => 
-        item.id === editingItem.id ? editingItem : item
-      );
+    // Validate required fields
+    if (!editingItem.title?.trim()) {
+      alert('Please enter an achievement title.');
+      return;
     }
 
-    onUpdate(updatedAchievements);
-    setEditingItem(null);
-    setIsAdding(false);
+    // Validate date_achieved is required according to backend
+    if (!editingItem.date_achieved?.trim()) {
+      alert('Please enter an achievement date.');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      let updatedAchievements;
+      if (editingItem.id === 'new') {
+        // Add new item
+        const newItem = { 
+          ...editingItem,
+          title: editingItem.title.trim(),
+          description: editingItem.description?.trim() || '',
+          organization: editingItem.organization?.trim() || '',
+          date_achieved: editingItem.date_achieved.trim()
+        };
+        delete newItem.id; // Remove temporary ID before sending to backend
+        updatedAchievements = [...achievements, newItem];
+      } else {
+        // Update existing item
+        const updatedItem = {
+          ...editingItem,
+          title: editingItem.title.trim(),
+          description: editingItem.description?.trim() || '',
+          organization: editingItem.organization?.trim() || '',
+          date_achieved: editingItem.date_achieved.trim()
+        };
+        updatedAchievements = achievements.map(item => 
+          item.id === editingItem.id ? updatedItem : item
+        );
+      }
+
+      // Update local state first for immediate UI feedback
+      onUpdate(updatedAchievements);
+      
+      // Save to backend
+      await onSave(updatedAchievements);
+      
+      setEditingItem(null);
+      setIsAdding(false);
+    } catch (error) {
+      console.error('Failed to save achievements:', error);
+      // Optionally show user-friendly error message
+      alert('Failed to save achievement. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -100,12 +140,13 @@ const ResumeAchievementsSection = ({ achievements = [], onUpdate }) => {
       
       {isExpanded && (
         <div className="space-y-3">
-        {achievements.map((item) => (
+        {achievements.map((item, index) => (
           <AchievementItem
-            key={item.id}
+            key={item.id || `achievement-${index}`}
             item={item}
             isEditing={editingItem?.id === item.id}
             editingItem={editingItem}
+            isSaving={isSaving}
             onEdit={() => handleEdit(item)}
             onDelete={() => handleDelete(item)}
             onSave={handleSave}
@@ -116,10 +157,12 @@ const ResumeAchievementsSection = ({ achievements = [], onUpdate }) => {
         
         {isAdding && (
           <AchievementItem
+            key="new-achievement"
             item={editingItem}
             isEditing={true}
             editingItem={editingItem}
             isNew={true}
+            isSaving={isSaving}
             onSave={handleSave}
             onCancel={handleCancel}
             onInputChange={handleInputChange}
@@ -136,6 +179,7 @@ const AchievementItem = ({
   isEditing, 
   editingItem, 
   isNew = false,
+  isSaving = false,
   onEdit, 
   onDelete, 
   onSave, 
@@ -180,10 +224,10 @@ const AchievementItem = ({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
-                label="Date (Optional)"
+                label="Date Achieved"
                 type="date"
-                value={editingItem?.date || ''}
-                onChange={(e) => onInputChange('date', e.target.value)}
+                value={editingItem?.date_achieved || ''}
+                onChange={(e) => onInputChange('date_achieved', e.target.value)}
               />
               <Input
                 label="Organization (Optional)"
@@ -193,10 +237,20 @@ const AchievementItem = ({
               />
             </div>
             <div className="flex items-center justify-end gap-3 pt-4">
-              <Button variant="outline" size="sm" onClick={onCancel}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onCancel}
+                disabled={isSaving}
+              >
                 Cancel
               </Button>
-              <Button size="sm" onClick={onSave}>
+              <Button 
+                size="sm" 
+                onClick={onSave}
+                loading={isSaving}
+                disabled={isSaving}
+              >
                 Save Achievement
               </Button>
             </div>
@@ -218,8 +272,8 @@ const AchievementItem = ({
           {item.organization && (
             <p className="text-sm text-gray-600 mt-1">{item.organization}</p>
           )}
-          {item.date && (
-            <p className="text-sm text-gray-500 mt-1">{item.date}</p>
+          {item.date_achieved && (
+            <p className="text-sm text-gray-500 mt-1">{item.date_achieved}</p>
           )}
           {item.description && (
             <p className="text-sm text-gray-600 mt-2 line-clamp-2">{item.description}</p>

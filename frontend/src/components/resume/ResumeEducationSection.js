@@ -3,10 +3,11 @@ import { PlusIcon, TrashIcon, ChevronDownIcon, ChevronRightIcon } from '@heroico
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 
-const ResumeEducationSection = ({ education = [], onUpdate }) => {
+const ResumeEducationSection = ({ education = [], onUpdate, onSave }) => {
   const [editingItem, setEditingItem] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleAdd = () => {
     setIsAdding(true);
@@ -26,28 +27,37 @@ const ResumeEducationSection = ({ education = [], onUpdate }) => {
     setEditingItem({ ...item });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!editingItem) return;
 
-    let updatedEducation;
-    if (editingItem.id === 'new') {
-      // Add new item
-      const newItem = {
-        ...editingItem,
-        id: Date.now() // Temporary ID, backend will assign real ID
-      };
-      delete newItem.id; // Remove temporary ID before sending to backend
-      updatedEducation = [...education, newItem];
-    } else {
-      // Update existing item
-      updatedEducation = education.map(item => 
-        item.id === editingItem.id ? editingItem : item
-      );
-    }
+    setIsSaving(true);
+    try {
+      let updatedEducation;
+      if (editingItem.id === 'new') {
+        // Add new item
+        const newItem = { ...editingItem };
+        delete newItem.id; // Remove temporary ID before sending to backend
+        updatedEducation = [...education, newItem];
+      } else {
+        // Update existing item
+        updatedEducation = education.map(item => 
+          item.id === editingItem.id ? editingItem : item
+        );
+      }
 
-    onUpdate(updatedEducation);
-    setEditingItem(null);
-    setIsAdding(false);
+      // Update local state first for immediate UI feedback
+      onUpdate(updatedEducation);
+      
+      // Save to backend
+      await onSave(updatedEducation);
+      
+      setEditingItem(null);
+      setIsAdding(false);
+    } catch (error) {
+      console.error('Failed to save education:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -106,18 +116,18 @@ const ResumeEducationSection = ({ education = [], onUpdate }) => {
       
       {isExpanded && (
         <div className="space-y-3">
-          {education.map((item) => (
-            <EducationItem
-              key={item.id}
-              item={item}
-              isEditing={editingItem?.id === item.id}
-              editingItem={editingItem}
-              onEdit={() => handleEdit(item)}
-              onDelete={() => handleDelete(item)}
-              onSave={handleSave}
-              onCancel={handleCancel}
-              onInputChange={handleInputChange}
-            />
+          {education.map((item) => (              <EducationItem
+                key={item.id}
+                item={item}
+                isEditing={editingItem?.id === item.id}
+                editingItem={editingItem}
+                isSaving={isSaving}
+                onEdit={() => handleEdit(item)}
+                onDelete={() => handleDelete(item)}
+                onSave={handleSave}
+                onCancel={handleCancel}
+                onInputChange={handleInputChange}
+              />
           ))}
           
           {isAdding && (
@@ -126,6 +136,7 @@ const ResumeEducationSection = ({ education = [], onUpdate }) => {
               isEditing={true}
               editingItem={editingItem}
               isNew={true}
+              isSaving={isSaving}
               onSave={handleSave}
               onCancel={handleCancel}
               onInputChange={handleInputChange}
@@ -142,6 +153,7 @@ const EducationItem = ({
   isEditing, 
   editingItem, 
   isNew = false,
+  isSaving = false,
   onEdit, 
   onDelete, 
   onSave, 
@@ -224,10 +236,20 @@ const EducationItem = ({
               />
             </div>
             <div className="flex items-center justify-end gap-3 pt-4">
-              <Button variant="outline" size="sm" onClick={onCancel}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onCancel}
+                disabled={isSaving}
+              >
                 Cancel
               </Button>
-              <Button size="sm" onClick={onSave}>
+              <Button 
+                size="sm" 
+                onClick={onSave}
+                loading={isSaving}
+                disabled={isSaving}
+              >
                 Save Education
               </Button>
             </div>
