@@ -337,7 +337,7 @@ const ResumeEditor = () => {
                             height: "133.33%",
                           }}
                         >
-                          <ResumePreview resume={resume} />
+                          <ResumePreview resume={resume} showHeader={true} />
                         </div>
                       </div>
                     </div>
@@ -373,7 +373,7 @@ const ResumeEditor = () => {
               previewUpdateIndicator ? "ring-2 ring-green-200 rounded-lg" : ""
             }`}
           >
-            <ResumePreview resume={resume} />
+            <ResumePreview resume={resume} showHeader={true} />
           </div>
         </div>
       </Modal>

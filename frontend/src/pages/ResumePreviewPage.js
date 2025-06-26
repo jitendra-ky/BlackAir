@@ -71,7 +71,7 @@ const ResumePreviewPage = () => {
             }}
           >
             <div className="w-full h-full overflow-hidden">
-              <ResumePreview resume={resume} />
+              <ResumePreview resume={resume} showHeader={true} />
             </div>
           </div>
         </div>

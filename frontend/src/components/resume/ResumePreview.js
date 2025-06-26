@@ -1,6 +1,11 @@
 import React, { useMemo } from "react";
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import Button from "../ui/Button";
 
-const ResumePreview = ({ resume }) => {
+const ResumePreview = ({ resume, showHeader = false }) => {
+  const handleDownloadPDF = () => {
+    alert("Download PDF functionality implemented soon");
+  };
   // Memoize the preview content to ensure it updates when resume data changes
   const previewContent = useMemo(() => {
     if (!resume) {
@@ -12,10 +17,28 @@ const ResumePreview = ({ resume }) => {
     }
 
     return (
-      <div
-        className="bg-white p-8 shadow-lg"
-        style={{ fontFamily: "Times New Roman, serif" }}
-      >
+      <div className="bg-white">
+        {/* Preview Header with Download Button */}
+        {showHeader && (
+          <div className="flex justify-between items-center p-4 bg-gray-50 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Resume Preview</h3>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={handleDownloadPDF}
+              className="flex items-center gap-2"
+            >
+              <ArrowDownTrayIcon className="h-4 w-4" />
+              Download PDF
+            </Button>
+          </div>
+        )}
+        
+        {/* Resume Content */}
+        <div
+          className="p-8 shadow-lg"
+          style={{ fontFamily: "Times New Roman, serif" }}
+        >
         {/* Header Section */}
         <div className="text-center border-b-2 border-gray-800 pb-4 mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -239,6 +262,7 @@ const ResumePreview = ({ resume }) => {
             </ul>
           </div>
         )}
+        </div>
       </div>
     );
   }, [resume]); // Dependency on resume to trigger re-render when data changes
