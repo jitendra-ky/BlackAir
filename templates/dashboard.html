@@ -1,93 +1,54 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Dashboard - Resume Builder{% endblock %}
-
-{% block content %}
-<div class="dashboard-container max-w-6xl mx-auto p-4 min-h-screen">
-  <!-- Welcome Section -->
-  <div class="dashboard-welcome text-center py-8">
-    <h1 class="text-3xl font-medium mb-2 text-gray-900">Resume Dashboard</h1>
-    <p class="text-gray-600 mb-6">Create and manage your professional resumes</p>
-  </div>
-
-  <!-- Dashboard Actions -->
-  <div class="dashboard-actions flex justify-between items-center mb-8">
-    <h2 class="section-title text-xl text-gray-900 font-medium">My Resumes</h2>
-    <button id="create-resume-btn" class="btn bg-brand-blue text-white px-4 py-2 rounded hover:bg-blue-600">
-      Create New Resume
-    </button>
-  </div>
-
-  <!-- Resume List Section -->
-  <div id="resume-list" class="resume-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    <!-- Loading spinner -->
-    <div id="loading-spinner" class="loading-spinner text-center py-12 col-span-full text-gray-600">
-      <div class="spinner w-8 h-8 border-2 border-gray-300 border-t-brand-blue rounded-full animate-spin mx-auto mb-3"></div>
-      <p>Loading your resumes...</p>
-    </div>
-
-    <!-- Empty state -->
-    <div id="empty-state" class="empty-state text-center py-12 col-span-full text-gray-600 hidden">
-      <h3 class="text-xl font-medium mb-2">No resumes yet</h3>
-      <p class="mb-6 max-w-md mx-auto">Start building your professional resume by creating your first one.</p>
-      <button class="btn bg-brand-blue text-white px-4 py-2 rounded hover:bg-blue-600" onclick="showCreateResumeModal()">
-        Create Your First Resume
-      </button>
-    </div>
-
-    <!-- Resume cards will be dynamically inserted here -->
-  </div>
-</div>
-
-<!-- Create Resume Modal -->
-<div id="create-resume-modal" class="modal fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center hidden">
-  <div class="modal-content mx-auto mt-3 bg-white rounded border w-11/12 max-w-md max-h-[90vh] overflow-y-auto">
-    <div class="modal-header flex justify-between items-center p-4 border-b">
-      <h2 class="text-lg font-medium text-gray-900">Create New Resume</h2>
-      <span class="close text-xl cursor-pointer text-gray-400 hover:text-gray-600 p-1" id="close-create-modal">&times;</span>
-    </div>
-    <div class="modal-body p-4">
-      <form id="create-resume-form">
-        <div class="form-group mb-4">
-          <label for="resume-title" class="block mb-1 font-medium text-gray-700 text-sm">Resume Title</label>
-          <input type="text" id="resume-title" name="title" placeholder="e.g., Software Developer Resume" required class="w-full px-3 py-2 border rounded text-sm focus:outline-none focus:border-brand-blue">
-          <small class="block mt-1 text-gray-500 text-xs">Give your resume a descriptive name to help you identify it later.</small>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder API - Server Status</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-500 to-purple-600 flex items-center justify-center font-sans">
+    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-11/12">
+        <!-- Status Header -->
+        <div class="text-center mb-8">
+            <div class="text-6xl mb-4">🚀</div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Server Running</h1>
+            <p class="text-gray-600 text-lg">Resume Builder Django API is operational</p>
         </div>
-        <div class="form-actions flex gap-3 justify-end mt-6 pt-3 border-t">
-          <button type="button" class="btn border text-gray-600 px-4 py-2 rounded hover:bg-gray-50" onclick="closeCreateResumeModal()">Cancel</button>
-          <button type="submit" class="btn bg-brand-blue text-white px-4 py-2 rounded hover:bg-blue-600">Create Resume</button>
+
+        <!-- Info Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-blue-500">
+                <h3 class="text-gray-700 text-xs uppercase tracking-wider font-semibold mb-2">Server status</h3>
+                <p class="text-gray-800 font-bold">localhost:8000 ✅ Online</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-blue-500">
+                <h3 class="text-gray-700 text-xs uppercase tracking-wider font-semibold mb-2">Frontend</h3>
+                <p class="text-gray-800 font-bold">React <a href="http://localhost:3000">localhost:3000</a></p>
+            </div>
         </div>
-      </form>
-    </div>
-  </div>
-</div>
 
-<!-- Resume Actions Modal -->
-<div id="resume-actions-modal" class="modal fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center hidden">
-  <div class="modal-content bg-white rounded border w-11/12 max-w-md max-h-[90vh] overflow-y-auto">
-    <div class="modal-header flex justify-between items-center p-4 border-b">
-      <h2 class="text-lg font-medium text-gray-900">Resume Actions</h2>
-      <span class="close text-xl cursor-pointer text-gray-400 hover:text-gray-600 p-1" id="close-actions-modal">&times;</span>
+        <!-- Endpoints Section -->
+        <div class="mb-8">
+            <h3 class="text-gray-900 text-xl font-semibold mb-4">Available Endpoints</h3>
+            <div class="space-y-3">
+                <div class="bg-gray-100 p-3 rounded-lg font-mono text-sm">
+                    <span class="font-semibold">Admin Panel:</span> 
+                    <a href="/admin/" class="text-blue-600 hover:underline ml-2">/admin/</a>
+                </div>
+                <div class="bg-gray-100 p-3 rounded-lg font-mono text-sm">
+                    <span class="font-semibold">User API:</span> 
+                    <a href="/api/auth/" class="text-blue-600 hover:underline ml-2">/api/auth/</a>
+                </div>
+                <div class="bg-gray-100 p-3 rounded-lg font-mono text-sm">
+                    <span class="font-semibold">Resume API:</span> 
+                    <a href="/api/resumes/" class="text-blue-600 hover:underline ml-2">/api/resumes/</a>
+                </div>
+                <div class="bg-gray-100 p-3 rounded-lg font-mono text-sm">
+                    <span class="font-semibold">Server Status:</span> 
+                    <a href="/" class="text-blue-600 hover:underline ml-2">/ (this page)</a>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="modal-body p-4">
-      <div class="action-buttons grid grid-cols-2 gap-3">
-        <button class="action-btn flex items-center gap-3 p-3 bg-gray-50 border rounded hover:bg-gray-100 cursor-pointer text-left" onclick="editResume()">
-          <span class="action-text text-sm">Edit Resume</span>
-        </button>
-        <button class="action-btn flex items-center gap-3 p-3 bg-gray-50 border rounded hover:bg-gray-100 cursor-pointer text-left" onclick="viewResume()">
-          <span class="action-text text-sm">View Resume</span>
-        </button>
-        <button class="action-btn flex items-center gap-3 p-3 bg-gray-50 border rounded hover:bg-gray-100 cursor-pointer text-left" onclick="duplicateResume()">
-          <span class="action-text text-sm">Duplicate Resume</span>
-        </button>
-        <button class="action-btn danger text-red-600 border-red-200 bg-red-50 hover:bg-red-100 flex items-center gap-3 p-3 border rounded cursor-pointer text-left" onclick="deleteResume()">
-          <span class="action-text text-sm">Delete Resume</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script type="module" src="{% static 'js/dashboard.js' %}"></script>
-{% endblock %}
+</body>
+</html>
