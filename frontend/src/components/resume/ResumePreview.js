@@ -67,43 +67,57 @@ const ResumePreview = ({ resume, showHeader = false }) => {
         
         {/* Resume Content */}
         <div
-          className="p-8 shadow-lg"
-          style={{ fontFamily: "Times New Roman, serif" }}
+          className="p-8 shadow-lg text-black"
+          style={{ 
+            fontFamily: "Helvetica, Arial, sans-serif",
+            fontSize: "10pt",
+            lineHeight: "1.2"
+          }}
         >
         {/* Header Section */}
-        <div className="text-center border-b-2 border-gray-800 pb-4 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="text-center pb-2 mb-3" style={{ borderBottom: "2px solid #2563eb" }}>
+          <h1 className="font-bold mb-1 text-black" style={{ fontSize: "18pt", margin: "0 0 4px 0" }}>
             {resume.name || "Your Name"}
           </h1>
           {resume.professional_title && (
-            <h2 className="text-lg text-gray-700 mb-3">{resume.professional_title}</h2>
+            <h2 className="font-normal mb-1.5" style={{ fontSize: "11pt", color: "#1e40af", margin: "0 0 6px 0" }}>{resume.professional_title}</h2>
           )}
-          <div className="text-sm text-gray-700 space-y-1">
-            {resume.email && <div>{resume.email}</div>}
-            {resume.phone && <div>{resume.phone}</div>}
-            {resume.location && <div>{resume.location}</div>}
-            <div className="flex justify-center space-x-4 mt-2 flex-wrap">
+          <div className="text-black" style={{ fontSize: "9pt" }}>
+            <div className="flex justify-center items-center flex-wrap gap-2">
+              {resume.email && <span>{resume.email}</span>}
+              {resume.email && (resume.phone || resume.location) && <span>•</span>}
+              {resume.phone && <span>{resume.phone}</span>}
+              {resume.phone && resume.location && <span>•</span>}
+              {resume.location && <span>{resume.location}</span>}
+            </div>
+            <div className="flex justify-center space-x-2 mt-1 flex-wrap" style={{ fontSize: "8pt" }}>
               {resume.linkedin_url && (
-                <span>LinkedIn: {resume.linkedin_url}</span>
+                <span>{resume.linkedin_url}</span>
               )}
-              {resume.github_url && <span>GitHub: {resume.github_url}</span>}
+              {resume.github_url && <span>{resume.github_url}</span>}
               {resume.website_url && (
-                <span>Website: {resume.website_url}</span>
+                <span>{resume.website_url}</span>
               )}
               {resume.twitter_url && (
-                <span>Twitter: {resume.twitter_url}</span>
+                <span>{resume.twitter_url}</span>
               )}
             </div>
           </div>
         </div>
 
-        {/* Professional Summary - Note: This field doesn't exist in the backend model yet */}
+        {/* Professional Summary */}
         {resume.summary && (
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900 border-b border-gray-400 mb-2">
-              PROFESSIONAL SUMMARY
+          <div className="mb-3" style={{ pageBreakInside: "avoid" }}>
+            <h2 className="font-bold pb-0.5 mb-1.5" style={{ 
+              fontSize: "11pt", 
+              color: "#1e40af", 
+              borderBottom: "1px solid #3b82f6",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px"
+            }}>
+              Professional Summary
             </h2>
-            <p className="text-sm text-gray-700 leading-relaxed">
+            <p style={{ fontSize: "9pt", marginTop: "2px", lineHeight: "1.2" }}>
               {resume.summary}
             </p>
           </div>
@@ -111,28 +125,34 @@ const ResumePreview = ({ resume, showHeader = false }) => {
 
         {/* Education */}
         {resume.education && resume.education.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900 border-b border-gray-400 mb-2">
-              EDUCATION
+          <div className="mb-3" style={{ pageBreakInside: "avoid" }}>
+            <h2 className="font-bold pb-0.5 mb-1.5" style={{ 
+              fontSize: "11pt", 
+              color: "#1e40af", 
+              borderBottom: "1px solid #3b82f6",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px"
+            }}>
+              Education
             </h2>
             {resume.education.map((edu, index) => (
-              <div key={edu.id || index} className="mb-3 last:mb-0">
-                <div className="flex justify-between items-start">
+              <div key={edu.id || index} className="mb-2" style={{ pageBreakInside: "avoid" }}>
+                <div className="flex justify-between items-start mb-0.5">
                   <div>
-                    <h3 className="font-semibold text-gray-900">
+                    <h3 className="font-bold text-black" style={{ fontSize: "10pt" }}>
                       {edu.degree} {edu.field_of_study && `in ${edu.field_of_study}`}
                     </h3>
-                    <p className="text-gray-700">{edu.school}</p>
+                    <p style={{ color: "#1e40af", fontSize: "9pt" }}>{edu.school}</p>
                   </div>
-                  <div className="text-right text-sm text-gray-600">
+                  <div className="text-right" style={{ fontSize: "8pt", color: "#6b7280", flexShrink: 0 }}>
                     <div>{edu.start_date} - {edu.end_date || 'Present'}</div>
                   </div>
                 </div>
                 {edu.gpa && (
-                  <p className="text-sm text-gray-600 mt-1">GPA: {edu.gpa}</p>
+                  <p style={{ fontSize: "9pt", marginTop: "2px", lineHeight: "1.2" }}>GPA: {edu.gpa}</p>
                 )}
                 {edu.description && (
-                  <p className="text-sm text-gray-700 mt-1">{edu.description}</p>
+                  <p style={{ fontSize: "9pt", marginTop: "2px", lineHeight: "1.2" }}>{edu.description}</p>
                 )}
               </div>
             ))}
@@ -141,29 +161,37 @@ const ResumePreview = ({ resume, showHeader = false }) => {
 
         {/* Experience */}
         {resume.experience && resume.experience.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900 border-b border-gray-400 mb-2">
-              PROFESSIONAL EXPERIENCE
+          <div className="mb-3" style={{ pageBreakInside: "avoid" }}>
+            <h2 className="font-bold pb-0.5 mb-1.5" style={{ 
+              fontSize: "11pt", 
+              color: "#1e40af", 
+              borderBottom: "1px solid #3b82f6",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px"
+            }}>
+              Professional Experience
             </h2>
             {resume.experience.map((exp, index) => (
-              <div key={exp.id || index} className="mb-4 last:mb-0">
-                <div className="flex justify-between items-start mb-1">
+              <div key={exp.id || index} className="mb-2" style={{ pageBreakInside: "avoid" }}>
+                <div className="flex justify-between items-start mb-0.5">
                   <div>
-                    <h3 className="font-semibold text-gray-900">{exp.position}</h3>
-                    <p className="text-gray-700">{exp.company}</p>
+                    <h3 className="font-bold text-black" style={{ fontSize: "10pt" }}>{exp.position}</h3>
+                    <p style={{ color: "#1e40af", fontSize: "9pt" }}>{exp.company}</p>
                   </div>
-                  <div className="text-right text-sm text-gray-600">
+                  <div className="text-right" style={{ fontSize: "8pt", color: "#6b7280", flexShrink: 0 }}>
                     <div>{exp.start_date} - {exp.end_date || (exp.is_current ? 'Present' : 'Present')}</div>
                     {exp.location && <div>{exp.location}</div>}
                   </div>
                 </div>
                 {exp.description && (
-                  <div className="text-sm text-gray-700 mt-2">
-                    {exp.description.split('\n').map((line, lineIndex) => (
-                      <div key={lineIndex} className="mb-1">
-                        {line.trim().startsWith('•') ? line : `• ${line}`}
-                      </div>
-                    ))}
+                  <div style={{ fontSize: "9pt", marginTop: "2px", lineHeight: "1.2" }}>
+                    <ul style={{ margin: 0, paddingLeft: "12px" }}>
+                      {exp.description.split('\n').map((line, lineIndex) => (
+                        <li key={lineIndex} style={{ marginBottom: "1px" }}>
+                          {line.trim().startsWith('•') ? line.substring(1).trim() : line}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
               </div>
@@ -173,32 +201,38 @@ const ResumePreview = ({ resume, showHeader = false }) => {
 
         {/* Projects */}
         {resume.projects && resume.projects.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900 border-b border-gray-400 mb-2">
-              PROJECTS
+          <div className="mb-3" style={{ pageBreakInside: "avoid" }}>
+            <h2 className="font-bold pb-0.5 mb-1.5" style={{ 
+              fontSize: "11pt", 
+              color: "#1e40af", 
+              borderBottom: "1px solid #3b82f6",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px"
+            }}>
+              Projects
             </h2>
             {resume.projects.map((project, index) => (
-              <div key={project.id || index} className="mb-3 last:mb-0">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-semibold text-gray-900">{project.name}</h3>
-                  <div className="text-sm text-gray-600">
+              <div key={project.id || index} className="mb-2" style={{ pageBreakInside: "avoid" }}>
+                <div className="flex justify-between items-start mb-0.5">
+                  <h3 className="font-bold text-black" style={{ fontSize: "10pt" }}>{project.name}</h3>
+                  <div style={{ fontSize: "8pt", color: "#6b7280", flexShrink: 0 }}>
                     {project.start_date} - {project.end_date || 'Present'}
                   </div>
                 </div>
                 {project.description && (
-                  <p className="text-sm text-gray-700 mt-1">{project.description}</p>
+                  <p style={{ fontSize: "9pt", marginTop: "2px", lineHeight: "1.2" }}>{project.description}</p>
                 )}
                 {project.technologies && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    <span className="font-medium">Technologies:</span> {project.technologies}
+                  <p style={{ fontSize: "9pt", marginTop: "2px", lineHeight: "1.2" }}>
+                    <span className="font-bold">Technologies:</span> {project.technologies}
                   </p>
                 )}
-                <div className="text-sm text-gray-600 mt-1 space-x-4">
+                <div style={{ fontSize: "9pt", marginTop: "2px", lineHeight: "1.2" }}>
                   {project.project_url && (
-                    <span><span className="font-medium">URL:</span> {project.project_url}</span>
+                    <span><span className="font-bold">URL:</span> {project.project_url} </span>
                   )}
                   {project.github_url && (
-                    <span><span className="font-medium">GitHub:</span> {project.github_url}</span>
+                    <span><span className="font-bold">GitHub:</span> {project.github_url}</span>
                   )}
                 </div>
               </div>
@@ -208,11 +242,17 @@ const ResumePreview = ({ resume, showHeader = false }) => {
 
         {/* Skills */}
         {resume.skills && resume.skills.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900 border-b border-gray-400 mb-2">
-              SKILLS
+          <div className="mb-3" style={{ pageBreakInside: "avoid" }}>
+            <h2 className="font-bold pb-0.5 mb-1.5" style={{ 
+              fontSize: "11pt", 
+              color: "#1e40af", 
+              borderBottom: "1px solid #3b82f6",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px"
+            }}>
+              Skills
             </h2>
-            <div className="grid grid-cols-1 gap-2">
+            <div className="grid grid-cols-2 gap-0.5">
               {/* Group skills by category */}
               {Object.entries(
                 resume.skills.reduce((acc, skill) => {
@@ -222,8 +262,8 @@ const ResumePreview = ({ resume, showHeader = false }) => {
                   return acc;
                 }, {})
               ).map(([category, skills]) => (
-                <div key={category} className="text-sm text-gray-700">
-                  <span className="font-medium">{category}:</span> {
+                <div key={category} style={{ fontSize: "9pt" }}>
+                  <span className="font-bold" style={{ color: "#1e40af" }}>{category}:</span> {
                     skills.map(skill => skill.name).join(', ')
                   }
                 </div>
@@ -234,29 +274,35 @@ const ResumePreview = ({ resume, showHeader = false }) => {
 
         {/* Certifications */}
         {resume.certifications && resume.certifications.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900 border-b border-gray-400 mb-2">
-              CERTIFICATIONS
+          <div className="mb-3" style={{ pageBreakInside: "avoid" }}>
+            <h2 className="font-bold pb-0.5 mb-1.5" style={{ 
+              fontSize: "11pt", 
+              color: "#1e40af", 
+              borderBottom: "1px solid #3b82f6",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px"
+            }}>
+              Certifications
             </h2>
             {resume.certifications.map((cert, index) => (
-              <div key={cert.id || index} className="mb-2 last:mb-0">
-                <div className="flex justify-between items-start">
+              <div key={cert.id || index} className="mb-2" style={{ pageBreakInside: "avoid" }}>
+                <div className="flex justify-between items-start mb-0.5">
                   <div>
-                    <h3 className="font-semibold text-gray-900">{cert.name}</h3>
-                    <p className="text-gray-700">{cert.issuing_organization}</p>
+                    <h3 className="font-bold text-black" style={{ fontSize: "10pt" }}>{cert.name}</h3>
+                    <p style={{ color: "#1e40af", fontSize: "9pt" }}>{cert.issuing_organization}</p>
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div style={{ fontSize: "8pt", color: "#6b7280", flexShrink: 0 }}>
                     {cert.issue_date}
                     {cert.expiration_date && ` - ${cert.expiration_date}`}
                   </div>
                 </div>
                 {cert.credential_id && (
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p style={{ fontSize: "9pt", marginTop: "2px", lineHeight: "1.2" }}>
                     Credential ID: {cert.credential_id}
                   </p>
                 )}
                 {cert.credential_url && (
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p style={{ fontSize: "9pt", marginTop: "2px", lineHeight: "1.2" }}>
                     URL: {cert.credential_url}
                   </p>
                 )}
@@ -267,26 +313,34 @@ const ResumePreview = ({ resume, showHeader = false }) => {
 
         {/* Achievements */}
         {resume.achievements && resume.achievements.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900 border-b border-gray-400 mb-2">
-              ACHIEVEMENTS
+          <div className="mb-3" style={{ pageBreakInside: "avoid" }}>
+            <h2 className="font-bold pb-0.5 mb-1.5" style={{ 
+              fontSize: "11pt", 
+              color: "#1e40af", 
+              borderBottom: "1px solid #3b82f6",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px"
+            }}>
+              Achievements
             </h2>
-            <ul className="space-y-1">
+            <ul style={{ margin: 0, paddingLeft: 0, listStyle: "none" }}>
               {resume.achievements.map((achievement, index) => (
-                <li key={achievement.id || index} className="text-sm text-gray-700">
+                <li key={achievement.id || index} style={{ marginBottom: "6px", fontSize: "9pt" }}>
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="font-medium">• {achievement.title}</span>
-                      {achievement.organization && (
-                        <span className="text-gray-600"> - {achievement.organization}</span>
+                      {achievement.date_achieved && (
+                        <span className="float-right" style={{ color: "#6b7280", fontSize: "8pt" }}>
+                          {achievement.date_achieved}
+                        </span>
                       )}
-                      <p className="text-gray-700 mt-1 ml-3">{achievement.description}</p>
+                      <span className="font-bold text-black">{achievement.title}</span>
+                      {achievement.organization && (
+                        <span style={{ color: "#1e40af" }}> - {achievement.organization}</span>
+                      )}
+                      {achievement.description && (
+                        <div style={{ marginTop: "1px", marginLeft: "10px" }}>{achievement.description}</div>
+                      )}
                     </div>
-                    {achievement.date_achieved && (
-                      <div className="text-sm text-gray-600 ml-2">
-                        {achievement.date_achieved}
-                      </div>
-                    )}
                   </div>
                 </li>
               ))}

@@ -4,7 +4,9 @@ from rest_framework.views import APIView
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
-from weasyprint import HTML
+from django.conf import settings
+from weasyprint import HTML, CSS
+import os
 from .models import Resume, Education, Experience, Project, Skill, Certification, Achievement
 from .serializers import (
     ResumeSerializer, EducationSerializer, ExperienceSerializer, 
@@ -131,8 +133,13 @@ class ResumePDFDownloadView(APIView):
         
         # Generate PDF
         try:
-            # Create PDF from HTML
-            pdf = HTML(string=html_string).write_pdf()
+            # Get the CSS file path
+            css_path = os.path.join(settings.BASE_DIR, 'templates', 'pdf', 'resume_pdf_styles.css')
+            
+            # Create PDF from HTML with CSS
+            pdf = HTML(string=html_string, base_url=settings.BASE_DIR).write_pdf(
+                stylesheets=[CSS(css_path)]
+            )
             
             # Create response
             response = HttpResponse(pdf, content_type='application/pdf')

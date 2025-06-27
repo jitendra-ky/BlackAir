@@ -1,0 +1,175 @@
+@page {
+    size: A4;
+    margin: 1.5cm;
+}
+
+body {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 10pt;
+    line-height: 1.2;
+    color: #000;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header Styles */
+.header {
+    text-align: center;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.header h1 {
+    font-size: 18pt;
+    font-weight: bold;
+    margin: 0 0 4px 0;
+    color: #000;
+}
+
+.header h2 {
+    font-size: 11pt;
+    margin: 0 0 6px 0;
+    color: #1e40af;
+    font-weight: normal;
+}
+
+.contact-info {
+    font-size: 9pt;
+    color: #000;
+
+    .contact-info-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        div {
+            margin: 0px 10px;
+        }
+    }
+}
+
+.contact-info div {
+    margin: 1px 0;
+}
+
+.contact-links {
+    margin-top: 4px;
+}
+
+.contact-links span {
+    margin: 0 8px 0 0;
+}
+
+/* Section Styles */
+.section {
+    margin-bottom: 12px;
+    page-break-inside: avoid;
+}
+
+.section-title {
+    font-size: 11pt;
+    font-weight: bold;
+    color: #1e40af;
+    border-bottom: 1px solid #3b82f6;
+    margin-bottom: 6px;
+    padding-bottom: 1px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    page-break-after: avoid;
+}
+
+/* Item Styles */
+.item {
+    margin-bottom: 8px;
+    page-break-inside: avoid;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+    page-break-after: avoid;
+}
+
+.item-title {
+    font-weight: bold;
+    font-size: 10pt;
+    color: #000;
+}
+
+.item-subtitle {
+    color: #1e40af;
+    font-size: 9pt;
+    font-weight: normal;
+}
+
+.item-date {
+    font-size: 8pt;
+    color: #6b7280;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.item-description {
+    font-size: 9pt;
+    margin-top: 2px;
+    line-height: 1.2;
+}
+
+.item-description ul {
+    margin: 0;
+    padding-left: 12px;
+}
+
+.item-description li {
+    margin-bottom: 1px;
+}
+
+/* Skills Grid */
+.skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+}
+
+.skill-category {
+    font-size: 9pt;
+}
+
+.skill-category strong {
+    font-weight: bold;
+    color: #1e40af;
+}
+
+/* Achievements */
+.achievements ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.achievements li {
+    margin-bottom: 6px;
+    font-size: 9pt;
+}
+
+.achievement-title {
+    font-weight: bold;
+    color: #000;
+}
+
+.achievement-org {
+    color: #1e40af;
+}
+
+.achievement-date {
+    float: right;
+    color: #6b7280;
+    font-size: 8pt;
+}
+
+.achievement-desc {
+    margin-top: 1px;
+    margin-left: 10px;
+}
