@@ -18,6 +18,12 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // If sending FormData, remove Content-Type to let browser set it
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+    
     return config;
   },
   (error) => {
@@ -86,8 +92,21 @@ export const authAPI = {
     return response.data;
   },
 
+  getProfileData: async () => {
+    const response = await api.get('/profile/');
+    return response.data;
+  },
+
   updateProfile: async (profileData) => {
     const response = await api.put('/profile/', profileData);
+    return response.data;
+  },
+
+  updateProfilePicture: async (file) => {
+    const formData = new FormData();
+    formData.append('profile_picture', file);
+    
+    const response = await api.put('/profile/', formData);
     return response.data;
   },
 };

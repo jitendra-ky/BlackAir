@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Dropdown, DropdownItem } from '../ui/Dropdown';
+import { ProfilePicture } from '../ui';
 import { UserCircleIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 import ProfileModal from './ProfileModal';
 
@@ -35,7 +36,11 @@ const Navbar = () => {
               <Dropdown
                 trigger={
                   <button className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
-                    <UserCircleIcon className="h-5 w-5" />
+                    <ProfilePicture 
+                      src={user?.profile_pic} 
+                      size="w-6 h-6"
+                      className="ring-2 ring-white"
+                    />
                     <span>{user?.username || 'User'}</span>
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

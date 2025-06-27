@@ -79,8 +79,27 @@ export const AuthProvider = ({ children }) => {
 
   const loadUser = useCallback(async () => {
     try {
+      // Get user data from /auth/user/
       const user = await authAPI.getProfile();
-      dispatch({ type: 'SET_USER', payload: user });
+      
+      // Try to get profile data from /profile/ (contains profile_picture, city, country)
+      let profileData = {};
+      try {
+        profileData = await authAPI.getProfileData();
+      } catch (profileError) {
+        console.log('Profile data not available, using defaults');
+        // If profile doesn't exist, it's okay - we'll use default values
+      }
+      
+      // Combine user and profile data
+      const combinedUser = {
+        ...user,
+        profile_pic: profileData.profile_picture || null,
+        city: profileData.city || null,
+        country: profileData.country || null
+      };
+      
+      dispatch({ type: 'SET_USER', payload: combinedUser });
     } catch (error) {
       console.error('Failed to load user:', error);
       // If loading user fails, logout
@@ -133,12 +152,25 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = async (profileData) => {
     try {
-      const updatedUser = await authAPI.updateProfile(profileData);
-      dispatch({ type: 'UPDATE_PROFILE_SUCCESS', payload: updatedUser });
+      await authAPI.updateProfile(profileData);
+      // Reload user data to get the updated profile
+      await loadUser();
       toast.success('Profile updated successfully!');
-      return updatedUser;
     } catch (error) {
       const errorMessage = error.response?.data?.detail || 'Failed to update profile';
+      toast.error(errorMessage);
+      throw error;
+    }
+  };
+
+  const updateProfilePicture = async (file) => {
+    try {
+      await authAPI.updateProfilePicture(file);
+      // Reload user data to get the updated profile picture
+      await loadUser();
+      toast.success('Profile picture updated successfully!');
+    } catch (error) {
+      const errorMessage = error.response?.data?.detail || 'Failed to update profile picture';
       toast.error(errorMessage);
       throw error;
     }
@@ -150,6 +182,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     updateProfile,
+    updateProfilePicture,
     loadUser,
   };
 
