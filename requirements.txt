@@ -4,3 +4,5 @@ djangorestframework==3.16.0
 djangorestframework-simplejwt==5.5.0
 django-cors-headers==4.6.0
 weasyprint==62.3
+Pillow==11.2.1
+requests==2.32.4

@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from .serializers import RegisterSerializer, UserProfileSerializer
 from .models import UserProfile
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -24,6 +25,7 @@ class RegisterView(generics.CreateAPIView, generics.RetrieveAPIView):
 class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
     
     def get_object(self):
         """
